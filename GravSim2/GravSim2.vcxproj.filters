@@ -16,6 +16,9 @@
     <Filter Include="Engine">
       <UniqueIdentifier>{a507fb4e-0398-47eb-8a7b-7f0c17efadd4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{c0d5d523-7c08-4eba-974f-036999736521}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -27,10 +30,10 @@
     <ClInclude Include="targetver.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
-    <ClInclude Include="Shader.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Engine.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Shader.h">
       <Filter>Engine</Filter>
     </ClInclude>
   </ItemGroup>
@@ -44,8 +47,20 @@
     <ClCompile Include="Engine\Engine.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Shader.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="shaders\fragment.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\geometry.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\vertex.glsl">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

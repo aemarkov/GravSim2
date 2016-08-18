@@ -8,19 +8,15 @@ Engine::Engine(int width, int height, int major_version, int minor_version)
 
 	init_opengl();
 
-	// Clear our buffer with a grey background
-	//glClearColor(1, 1, 1, 1.0);
-	//glClear(GL_COLOR_BUFFER_BIT);
-	//SDL_GL_SwapWindow(window);
-
 	init_buffers();
+
 	shader.Init();
+	shader.LoadShader("shaders/vertex.glsl", GL_VERTEX_SHADER);
+	//shader.LoadShader("shaders/geometry.glsl", GL_GEOMETRY_SHADER);
+	shader.LoadShader("shaders/fragment.glsl", GL_FRAGMENT_SHADER);
 	shader.UseProgram();
 
-
 	sdl_loop();
-
-	init_opengl();
 }
 
 Engine::~Engine()
@@ -159,7 +155,7 @@ void Engine::render(GLfloat * points, unsigned int count)
 	glClearColor(1, 1, 1, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	glDrawArrays(GL_LINE_LOOP, 0, 4);
+	glDrawArrays(GL_TRIANGLES, 0,count);
 
 	delete[] colors;
 }

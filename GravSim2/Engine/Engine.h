@@ -3,7 +3,7 @@
 #include <SDL2\SDL.h>
 #include <GLEW\glew.h>
 #include <iostream>
-#include <Shader.h>
+#include "Shader.h"
 
 //”прощает работу с OpengGL и SDL
 class Engine
