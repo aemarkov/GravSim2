@@ -1,11 +1,13 @@
 #version 330
 
-in vec3 in_Position;
+in vec3 Position;
+//in vec4 in_Color;
+out vec4 Color;
 
-
-out vec4 ex_Color;
+uniform mat4 gWorld;
  
 void main(void) 
 {
-    gl_Position = vec4(in_Position.x*0.5, in_Position.y*0.5, in_Position.z*0.5, 1.0);
+    gl_Position =  gWorld * vec4(Position.x, Position.y, Position.z, 1.0);
+	Color = vec4(clamp(Position, 0.0, 1.0), 1.0);
 }

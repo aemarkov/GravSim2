@@ -7,6 +7,10 @@
 #include <vector>
 #include <GLEW\glew.h>
 
+/*
+ * Упрощает работу с шейдерами.
+ * Загружает, компилирует и линкует шейдеры
+ */
 class Shader
 {
 public:
@@ -18,8 +22,14 @@ public:
 	//Загружает и компилирует шейдер
 	bool LoadShader(std::string filename, GLenum shader_type);
 	
+	//Линкует программу
+	bool LinkProgram();
+
+	//glGetUniformLocation wrapper
+	GLuint GetUniformLocation(const GLchar* name);
+
 	//Использует программу
-	bool UseProgram();
+	void UseProgram();
 private:
 	
 	//Читает файл в строку

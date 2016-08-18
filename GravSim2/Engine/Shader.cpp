@@ -13,7 +13,7 @@ void Shader::Init()
 //Загружает и компилирует шейдер
 bool Shader::LoadShader(std::string filename, GLenum shader_type)
 {
-	std::cout << "Loading shader " << filename << std::endl;
+	std::cout << "Loading shader " << filename << "..." << std::endl;
 	
 	//Load code
 	GLuint shader = glCreateShader(shader_type);
@@ -28,18 +28,24 @@ bool Shader::LoadShader(std::string filename, GLenum shader_type)
 
 	int was_compiled;
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &was_compiled);
-	PrintShaderCompilationErrorInfo(shader);
+	
 
 	if (!was_compiled)
+	{
+		PrintShaderCompilationErrorInfo(shader);
 		return false;
+	}
 
 	shaders.push_back(shader);
+	std::cout << "Done" << std::endl;
 	return true;
 }
 
-//Использует программу
-bool Shader::UseProgram()
+//Линкует программу
+bool Shader::LinkProgram()
 {
+	std::cout << "Linking program..." << std::endl;
+
 	//Attach all shaders
 	for (GLuint shader : shaders)
 		glAttachShader(shader_program, shader);
@@ -54,8 +60,20 @@ bool Shader::UseProgram()
 		return false;
 	}
 
-	glUseProgram(shader_program);
+	std::cout << "Done" << std::endl;
 	return true;
+}
+
+//glGetUniformLocation wrapper
+GLuint Shader::GetUniformLocation(const GLchar* name)
+{
+	return glGetUniformLocation(shader_program, name);
+}
+
+//Использует программу
+void Shader::UseProgram()
+{
+	glUseProgram(shader_program);
 }
 
 //Читает файл в строку

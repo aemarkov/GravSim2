@@ -36,6 +36,9 @@
     <ClInclude Include="Engine\Shader.h">
       <Filter>Engine</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Transofrm.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -48,6 +51,9 @@
       <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Shader.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Transform.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
   </ItemGroup>
