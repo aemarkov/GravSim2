@@ -8,6 +8,7 @@
 
 #include "Shader.h"
 #include "Transofrm.h"
+#include "Camera.h"
 
 //”прощает работу с OpengGL и SDL
 class Engine
@@ -23,6 +24,8 @@ private:
 	SDL_Window* window;
 	SDL_GLContext context;
 	Shader shader;
+
+	Camera camera;
 
 	GLuint vbo[2], ibo[1], vao[1];
 	const uint32_t positionAttributeIndex = 0, colorAttributeIndex = 1;

@@ -1,6 +1,7 @@
 #include "Engine.h"
 
 Engine::Engine(int width, int height, int major_version, int minor_version)
+	:camera(width/height,45.0,0.1,100)
 {
 	// Инициализация
 	if (!init_sdl(width, height, 3, 2))
@@ -19,6 +20,7 @@ Engine::Engine(int width, int height, int major_version, int minor_version)
 	gWorldLocation = shader.GetUniformLocation("gWorld");
 
 	shader.UseProgram();
+
 
 	sdl_loop();
 }
@@ -109,12 +111,12 @@ void Engine::sdl_loop()
 		//Draw
 
 	
-		GLfloat points[] =
+		/*GLfloat points[] =
 		{
-			0, -1, 0,
-			0, 1, 0,
-			1, 0, 0,
-			0, 0, 1
+			0, 0, 2,
+			0, 1, 2,
+			1, 0, 2,
+			-0.5, 0, 3
 		};
 
 		unsigned int indexes[] =
@@ -123,23 +125,23 @@ void Engine::sdl_loop()
 			0, 1, 3,
 			0, 2, 3,
 			1, 2, 3
-		};
+		};*/
 
-		/*GLfloat points[] =
+		GLfloat points[] =
 		{
-			-1, -1, 0,
-			-1, 1,  0,
-			 1, 1,  0,
-			 1, -1, 0
+			-1, -1, 3,
+			-1, 1,  3,
+			 1, 1,  3,
+			 1, -1, 3
 		};
 
 		unsigned int indexes[] =
 		{
 			0, 1, 2,
 			0, 2, 3
-		};*/
+		};
 
-		render(points, 4, indexes, 12 );
+		render(points, 4, indexes, 6 );
 
 		//refresh window
 		glFlush();
@@ -187,10 +189,10 @@ void Engine::render(GLfloat* points, unsigned int points_count, unsigned int * i
 	//glEnableVertexAttribArray(color_index);
 
 	//setup uniforms
-	Transform transform;
-	transform.Rotate(0, 0, glm::radians(angle));
-	transform.Move(0.5, 0, 0);
-	angle += 0.5;
+	camera.SetPosition(0, 0, angle);
+	Transform transform = camera.GetTransform();
+
+	angle -= 0.01;
 
 	glUniformMatrix4fv(gWorldLocation, 1, GL_FALSE, glm::value_ptr(transform.GetMat()));
 

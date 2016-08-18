@@ -4,6 +4,13 @@ Transform::Transform() : scale(1,1,1)
 {
 }
 
+Transform::Transform(glm::mat4 camera_matrix, glm::mat4 projection_matrix) : Transform()
+{
+	this->projection_matrix = projection_matrix;
+	this->camera_matrix = camera_matrix;
+	is_matrix_set = true;
+}
+
 void Transform::Scale(float x, float y, float z)
 {
 	scale = glm::vec3(x, y, z);
@@ -42,6 +49,13 @@ glm::mat4x4 Transform::GetMat()
 	mat = glm::rotate(mat, rot.y, glm::vec3(0, 1, 0));
 	mat = glm::rotate(mat, rot.z, glm::vec3(0, 0, 1));
 	mat = glm::translate(mat, move);
+
+	if (is_matrix_set)
+	{
+		//Преобразования камеры
+		mat = camera_matrix*mat;
+		mat = projection_matrix*mat;
+	}
 
 	return mat;
 }
