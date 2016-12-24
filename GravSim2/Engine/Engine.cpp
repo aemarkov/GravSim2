@@ -72,6 +72,8 @@ bool Engine::init_sdl(int width, int height, int major_version, int minor_versio
 	SDL_WarpMouseInWindow(window, width / 2, height / 2);
 	SDL_ShowCursor(0);
 
+	glEnable(GL_PROGRAM_POINT_SIZE);
+
 	return true;
 }
 
@@ -177,7 +179,7 @@ void Engine::render(GLfloat* points, unsigned int points_count, unsigned int * i
 //Drawing here
 void Engine::render(DataToDraw dataToDraw)
 {
-	glClearColor(1, 1, 1, 0.5);
+	glClearColor(0, 0, 0, 0.5);
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	if (dataToDraw.PointsCount == 0)
