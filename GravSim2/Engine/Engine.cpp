@@ -1,7 +1,9 @@
 #include "Engine.h"
 
-Engine::Engine(int width, int height, int major_version, int minor_version)
-	:camera(width/height,45.0,0.1,100)
+Engine::Engine(int width, int height, int major_version, int minor_version, std::function<void(DataToDraw &, float)> callback)
+	:camera(width / height, 45.0, 0.1, 100),
+	dataToDraw(),
+	update_callback(callback)
 {
 
 	this->width = width;
@@ -34,6 +36,11 @@ Engine::~Engine()
 	SDL_Quit();
 }
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
 bool Engine::init_sdl(int width, int height, int major_version, int minor_version)
 {
 	//Init SDL
@@ -64,7 +71,6 @@ bool Engine::init_sdl(int width, int height, int major_version, int minor_versio
 	SDL_GL_SetSwapInterval(1);
 	SDL_WarpMouseInWindow(window, width / 2, height / 2);
 	SDL_ShowCursor(0);
-	//SDL_SetRelativeMouseMode(SDL_TRUE);
 
 	return true;
 }
@@ -148,40 +154,12 @@ void Engine::sdl_loop()
 				 
 		}
 
-		//Draw
 
-	
-		/*GLfloat points[] =
-		{
-			0, 0, 2,
-			0, 1, 2,
-			1, 0, 2,
-			-0.5, 0, 3
-		};
+		//RENDER
+		if (update_callback != nullptr)
+			update_callback(dataToDraw, 0);
 
-		unsigned int indexes[] =
-		{
-			0, 1, 2,
-			0, 1, 3,
-			0, 2, 3,
-			1, 2, 3
-		};*/
-
-		GLfloat points[] =
-		{
-			-1, -1, 7,
-			-1, 1,  7,
-			 1, 1,  7,
-			 1, -1, 7
-		};
-
-		unsigned int indexes[] =
-		{
-			0, 1, 2,
-			0, 2, 3
-		};
-
-		render(points, 4, indexes, 12 );
+		render(dataToDraw);
 
 		//refresh window
 		glFlush();
@@ -189,58 +167,67 @@ void Engine::sdl_loop()
 	}
 }
 
-//Drawing here
+
 void Engine::render(GLfloat* points, unsigned int points_count, unsigned int * indexes, unsigned int indexes_count)
 {
+	render(DataToDraw(points, points_count, indexes, indexes_count));
+}
+
+
+//Drawing here
+void Engine::render(DataToDraw dataToDraw)
+{
+	glClearColor(1, 1, 1, 0.5);
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	if (dataToDraw.PointsCount == 0)
+		return;
+
+
 	const int pos_index = 0;
 	const int color_index = 1;
 	GLenum error;
 
 	glBindVertexArray(vao[0]);
 
-	if (indexes != nullptr)
+	if (dataToDraw.Indexes != nullptr)
 	{
 		//Setup indexes
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo[0]);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexes_count * sizeof(unsigned int), indexes, GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, dataToDraw.IndexesCount * sizeof(unsigned int), dataToDraw.Indexes, GL_STATIC_DRAW);
 	}
 
 
 	//Setup points
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-	glBufferData(GL_ARRAY_BUFFER, points_count * 3 * sizeof(GLfloat), points, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, dataToDraw.PointsCount * 3 * sizeof(GLfloat), dataToDraw.Points, GL_STATIC_DRAW);
 	glVertexAttribPointer(pos_index, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(pos_index);
 
 	//setup colors
-	GLfloat* colors = new GLfloat[points_count * 4];
-	for (int i = 0; i < points_count *4; i+=4)
+	GLfloat* colors = new GLfloat[dataToDraw.PointsCount * 4];
+	for (int i = 0; i < dataToDraw.PointsCount *4; i+=4)
 	{
-		colors[i] = 0;
-		colors[i+1] = 1;
-		colors[i+2] = 1;
+		colors[i] = 1;
+		colors[i+1] = 0;
+		colors[i+2] = 0;
 		colors[i+3] = 1;
 	}
 
-
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-	glBufferData(GL_ARRAY_BUFFER, points_count * 4 * sizeof(GLfloat), colors, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, dataToDraw.PointsCount * 4 * sizeof(GLfloat), colors, GL_STATIC_DRAW);
 	glVertexAttribPointer(color_index, 4, GL_FLOAT, GL_FALSE, 0, 0);
-	//glEnableVertexAttribArray(color_index);
+	glEnableVertexAttribArray(color_index);
 
 	//setup uniforms
-	//camera.SetRotationAngles(10, 0, 0);
 	Transform transform = camera.GetTransform();
 
 	glUniformMatrix4fv(gWorldLocation, 1, GL_FALSE, glm::value_ptr(transform.GetMat()));
 
-	glClearColor(1, 1, 1, 0.5);
-	glClear(GL_COLOR_BUFFER_BIT);
-
-	if(indexes!=nullptr)
-		glDrawElements(GL_TRIANGLES, indexes_count, GL_UNSIGNED_INT, 0); 
+	if(dataToDraw.Indexes!=nullptr)
+		glDrawElements(GL_LINES, dataToDraw.IndexesCount, GL_UNSIGNED_INT, 0); 
 	else
-		glDrawArrays(GL_TRIANGLES, 0, points_count);
+		glDrawArrays(GL_TRIANGLES, 0, dataToDraw.PointsCount);
 	
 
 	delete[] colors;

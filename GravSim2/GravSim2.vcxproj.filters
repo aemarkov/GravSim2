@@ -42,6 +42,9 @@
     <ClInclude Include="Engine\Camera.h">
       <Filter>Engine</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\DataToDraw.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -60,6 +63,9 @@
       <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Camera.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\DataToDraw.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
   </ItemGroup>

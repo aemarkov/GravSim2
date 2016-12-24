@@ -158,6 +158,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Camera.h" />
+    <ClInclude Include="Engine\DataToDraw.h" />
     <ClInclude Include="Engine\Engine.h" />
     <ClInclude Include="Engine\Shader.h" />
     <ClInclude Include="Engine\Transofrm.h" />
@@ -166,6 +167,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Camera.cpp" />
+    <ClCompile Include="Engine\DataToDraw.cpp" />
     <ClCompile Include="Engine\Engine.cpp" />
     <ClCompile Include="Engine\Shader.cpp" />
     <ClCompile Include="Engine\Transform.cpp" />
