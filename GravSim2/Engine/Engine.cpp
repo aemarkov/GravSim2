@@ -3,6 +3,10 @@
 Engine::Engine(int width, int height, int major_version, int minor_version)
 	:camera(width/height,45.0,0.1,100)
 {
+
+	this->width = width;
+	this->height = height;
+
 	// Инициализация
 	if (!init_sdl(width, height, 3, 2))
 		throw "Init failed";
@@ -20,8 +24,6 @@ Engine::Engine(int width, int height, int major_version, int minor_version)
 	gWorldLocation = shader.GetUniformLocation("gWorld");
 
 	shader.UseProgram();
-
-
 	sdl_loop();
 }
 
@@ -60,6 +62,9 @@ bool Engine::init_sdl(int width, int height, int major_version, int minor_versio
 	context = SDL_GL_CreateContext(window);
 
 	SDL_GL_SetSwapInterval(1);
+	SDL_WarpMouseInWindow(window, width / 2, height / 2);
+	SDL_ShowCursor(0);
+	//SDL_SetRelativeMouseMode(SDL_TRUE);
 
 	return true;
 }
@@ -84,6 +89,8 @@ void Engine::init_buffers()
 //Main drawing and event cycle
 void Engine::sdl_loop()
 {
+	const float speed = 0.1;
+
 	bool is_running = true;
 	while (is_running) {
 
@@ -91,21 +98,54 @@ void Engine::sdl_loop()
 		SDL_Event event;
 		while (SDL_PollEvent(&event))
 		{
-			switch (event.type)
+			if (event.type == SDL_QUIT)
 			{
-			case SDL_QUIT:
 				is_running = false;
 				break;
-
-			case SDL_KEYDOWN:
+			}
+			else if (event.type == SDL_KEYDOWN)
+			{
 				switch (event.key.keysym.sym)
 				{
 				case SDLK_ESCAPE:
 					is_running = false;
 					break;
+
+					//Camera control
+				case SDLK_w:
+					camera.Move(0, 0, speed);
+					break;
+				case SDLK_s:
+					camera.Move(0, 0, -speed);
+					break;
+				case SDLK_a:
+					camera.Move(-speed, 0, 0);
+					break;
+				case SDLK_d:
+					camera.Move(speed, 0, 0);
+					break;
+				case SDLK_LSHIFT:
+					camera.Move(0.0, -speed, 0);
+					break;
+				case SDLK_SPACE:
+					camera.Move(0.0, +speed, 0);
+					break;
 				}
-				break;
 			}
+			else if(event.type == SDL_MOUSEMOTION)
+			{
+
+				int x, y;
+				SDL_GetMouseState(&x, &y);
+				int dx = width / 2 - x;;
+				int dy = height / 2 - y;
+
+				SDL_WarpMouseInWindow(window, width / 2, height / 2);
+				camera.Rotate(-dx / 10, dy / 10, 0);
+
+				//std::cout << dx << " " << dy << std::endl;
+			}
+				 
 		}
 
 		//Draw
@@ -129,10 +169,10 @@ void Engine::sdl_loop()
 
 		GLfloat points[] =
 		{
-			-1, -1, 3,
-			-1, 1,  3,
-			 1, 1,  3,
-			 1, -1, 3
+			-1, -1, 7,
+			-1, 1,  7,
+			 1, 1,  7,
+			 1, -1, 7
 		};
 
 		unsigned int indexes[] =
@@ -141,7 +181,7 @@ void Engine::sdl_loop()
 			0, 2, 3
 		};
 
-		render(points, 4, indexes, 6 );
+		render(points, 4, indexes, 12 );
 
 		//refresh window
 		glFlush();
@@ -189,10 +229,8 @@ void Engine::render(GLfloat* points, unsigned int points_count, unsigned int * i
 	//glEnableVertexAttribArray(color_index);
 
 	//setup uniforms
-	camera.SetPosition(0, 0, angle);
+	//camera.SetRotationAngles(10, 0, 0);
 	Transform transform = camera.GetTransform();
-
-	angle -= 0.01;
 
 	glUniformMatrix4fv(gWorldLocation, 1, GL_FALSE, glm::value_ptr(transform.GetMat()));
 

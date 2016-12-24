@@ -1,6 +1,6 @@
 #include "Camera.h"
 
-Camera::Camera(float aspect_ratio, float fov, float near_clipping, float far_clipping):position(0,0,0),target(0,0,0),direction(0,0,1),up(0,1,0)
+Camera::Camera(float aspect_ratio, float fov, float near_clipping, float far_clipping):position(0,0,0),direction(0,0,1),up(0,1,0)
 {
 	//Создание матрицы проекции
 	float z_range = far_clipping - near_clipping;
@@ -30,6 +30,21 @@ void Camera::SetPosition(float x, float y, float z)
 	calc_camera();
 }
 
+//Сдвигает камеру
+void Camera::Move(glm::vec3 dpos)
+{
+	position += dpos.z*direction;
+	position += dpos.y*up;
+	position -= dpos.x*(glm::cross(direction, up));
+
+	calc_camera();
+}
+
+void Camera::Move(float dx, float dy, float dz)
+{
+	Move(glm::vec3(dx, dy, dz));
+}
+
 
 //Задает направление взгляда вектором
 void  Camera::SetRotationVector(glm::vec3 direction, glm::vec3 up)
@@ -40,16 +55,42 @@ void  Camera::SetRotationVector(glm::vec3 direction, glm::vec3 up)
 	calc_camera();
 }
 
-//Задает направление взгляда углами
-void Camera::SetRotationAngles(float yaw, float pitch, float roll, glm::vec3 up)
+void Camera::SetRotationAngles(glm::vec3 angles)
 {
-	glm::vec3 direction;
+	glm::vec3 direction, up(0,1,0);
 
-	direction.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
-	direction.y = sin(glm::radians(pitch));
-	direction.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
+	float r_yaw = glm::radians(angles.x);
+	float r_pitch = glm::radians(angles.y);
+	float r_roll = glm::radians(angles.z);
+
+	this->angles = angles;
+
+	direction.x = sin(r_yaw) * cos(r_pitch);
+	direction.z = cos(r_yaw) * cos(r_pitch);
+	direction.y = sin(r_pitch);
+
+	/*up.x = cos(r_roll);
+	up.y = sin(r_roll)*cos(r_pitch);
+	up.z = sin(r_pitch)*sin(r_yaw);*/
 
 	SetRotationVector(direction, up);
+}
+
+//Задает направление взгляда углами
+void Camera::SetRotationAngles(float yaw, float pitch, float roll)
+{
+	SetRotationAngles(glm::vec3(yaw, pitch, roll));
+}
+
+//Вращает камеру на угол
+void Camera::Rotate(glm::vec3 d_rot)
+{
+	SetRotationAngles(angles + d_rot);
+}
+
+void Camera::Rotate(float d_yaw, float d_pitch, float d_roll)
+{
+	Rotate(glm::vec3(d_yaw, d_pitch, d_roll));
 }
 
 //Создает новый объект трансформации, который будет применять матрицы проекции и камеры

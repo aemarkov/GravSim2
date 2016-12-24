@@ -23,17 +23,20 @@ private:
 	//system
 	SDL_Window* window;
 	SDL_GLContext context;
-	Shader shader;
+	int width, height;
 
+	//Объект, отвечающий за шейдеры
+	Shader shader;						
+
+	//Камера
 	Camera camera;
 
+	//Буферы для создания вершин
 	GLuint vbo[2], ibo[1], vao[1];
-	const uint32_t positionAttributeIndex = 0, colorAttributeIndex = 1;
 
 	//Uniform
 	GLuint gWorldLocation;
 
-	float angle = 0;
 
 	//Methods
 	bool init_sdl(int width, int height, int major_version, int minor_version);
