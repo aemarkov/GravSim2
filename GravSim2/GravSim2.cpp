@@ -22,27 +22,23 @@ DataToDraw DrawCircle(glm::vec3 center, float radius, int count);
 DataToDraw DrawLine(glm::vec3 start, glm::vec3 end);
 
 DataToDraw dataToDraw;
+DataToDraw points;
 
 int main(int argc, char *argv[])
 {
 	dataToDraw = CreateFigures();
 
 	Engine engine(640, 480, 3, 3, callback);
+	engine.SetupStaticData(dataToDraw);
+	engine.Start();
+
+
 	return 0;
 }
 
 void callback(DataToDraw & data, float dt)
 {
-	
-
-	/*AddFigure(points, indexes, DrawCircle(glm::vec3(-1, 0, 0), 1, 36));
-	AddFigure(points, indexes, DrawCircle(glm::vec3(1, 0, 0), 1, 36));
-
-	AddFigure(points, indexes, DrawLine(glm::vec3(-1, 0, 1), glm::vec3(-1, 0, 6)));
-	AddFigure(points, indexes, DrawLine(glm::vec3(1, 0, 1), glm::vec3(1, 0, 6)));
-	AddFigure(points, indexes, DrawLine(glm::vec3(-1, 0, 6), glm::vec3(1, 0, 6)));*/
-
-	data = dataToDraw;
+	//data = dataToDraw;
 }
 
 

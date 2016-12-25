@@ -2,7 +2,8 @@
 
 Engine::Engine(int width, int height, int major_version, int minor_version, std::function<void(DataToDraw &, float)> callback)
 	:camera(width / height, 45.0, 0.1, 100),
-	dataToDraw(),
+	staticData(),
+	pointsData(),
 	update_callback(callback)
 {
 
@@ -14,8 +15,8 @@ Engine::Engine(int width, int height, int major_version, int minor_version, std:
 		throw "Init failed";
 
 	init_opengl();
-	init_ordynary_buffers(ordinaryBuffers);
-	init_particle_system_buffer(particleSystem, 100);
+	init_static_buffers(staticBuffers);
+	init_points_buffer(pointsBuffers, 100);
 
 	// Шейдеры
 	shader.Init();
@@ -27,7 +28,6 @@ Engine::Engine(int width, int height, int major_version, int minor_version, std:
 	gWorldLocation = shader.GetUniformLocation("gWorld");
 
 	shader.UseProgram();
-	sdl_loop();
 }
 
 Engine::~Engine()
@@ -35,6 +35,16 @@ Engine::~Engine()
 	SDL_GL_DeleteContext(context);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
+}
+
+void Engine::Start()
+{
+	sdl_loop();
+}
+
+void Engine::SetupStaticData(DataToDraw data)
+{
+	staticData = data;
 }
 
 
@@ -88,7 +98,7 @@ void Engine::init_opengl()
 
 ////////////////////////////////////////////// BUFFERS INITIALIZATION /////////////////////////////////////////////////
 
-void Engine::init_ordynary_buffers(OrdinaryBuffers & buffers)
+void Engine::init_static_buffers(DataBuffers & buffers)
 {
 	glGenBuffers(1, &buffers.VertexBufer);
 	glGenBuffers(1, &buffers.ColorBuffer);
@@ -96,7 +106,7 @@ void Engine::init_ordynary_buffers(OrdinaryBuffers & buffers)
 	glGenBuffers(1, &buffers.IndexBuffer);
 }
 
-void Engine::init_particle_system_buffer(ParticleSystemBuffers & buffers, int bufferSize)
+void Engine::init_points_buffer(DataBuffers & buffers, int bufferSize)
 {
 	static const GLfloat g_vertex_buffer_data[] =
 	{
@@ -106,19 +116,15 @@ void Engine::init_particle_system_buffer(ParticleSystemBuffers & buffers, int bu
 		0.05f, 0.05f, 0.0f,
 	};
 
-	//Vertex of particle (square)
-	glGenBuffers(1, &buffers.ParticleVertexBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, buffers.ParticleColorsBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
 
 	//Position buffer
 	//It will be fill every frame, now - NULL
-	glGenBuffers(1, &buffers.ParticlePositionsBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, buffers.ParticlePositionsBuffer);
-	glBufferData(GL_ARRAY_BUFFER, bufferSize * 4 * sizeof(GLfloat), NULL, GL_STREAM_DRAW);
+	glGenBuffers(1, &buffers.VertexBufer);
+	glBindBuffer(GL_ARRAY_BUFFER, buffers.VertexBufer);
+	glBufferData(GL_ARRAY_BUFFER, bufferSize * 3 * sizeof(GLfloat), NULL, GL_STREAM_DRAW);
 
-	glGenBuffers(1, &buffers.ParticleColorsBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, buffers.ParticleColorsBuffer);
+	glGenBuffers(1, &buffers.ColorBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, buffers.ColorBuffer);
 	glBufferData(GL_ARRAY_BUFFER, bufferSize * 4 * sizeof(GLfloat), NULL, GL_STREAM_DRAW);
 }
 
@@ -189,9 +195,9 @@ void Engine::sdl_loop()
 
 		//RENDER
 		if (update_callback != nullptr)
-			update_callback(dataToDraw, 0);
+			update_callback(pointsData, 0);
 
-		render(dataToDraw);
+		render(staticData);
 
 		//refresh window
 		glFlush();
@@ -219,27 +225,13 @@ void Engine::render(DataToDraw dataToDraw)
 
 	glUniformMatrix4fv(gWorldLocation, 1, GL_FALSE, glm::value_ptr(transform.GetMat()));
 
-	ParticleSystem system;
-	system.MaxCount = 100;
-	system.Count = 1;
-
-	system.Positions = new GLfloat[1 * 4];
-	system.Positions[0] = 0;
-	system.Positions[1] = 0;
-	system.Positions[2] = 0;
-	system.Positions[3] = 1;
-
-	system.Colors = new GLfloat[1 * 4];
-	system.Positions[1] = 0;
-	system.Positions[2] = 1;
-	system.Positions[3] = 0;
-	system.Positions[4] = 1;
-
-	renderOrdinary(dataToDraw, ordinaryBuffers);
-	renderParticleSystem(system, particleSystem);
+	
+	renderStatic(dataToDraw, staticBuffers);
+	renderPoints(pointsData, pointsBuffers);
 }
 
-void Engine::renderOrdinary(DataToDraw dataToDraw, OrdinaryBuffers & buffers)
+//Render static lines
+void Engine::renderStatic(DataToDraw dataToDraw, DataBuffers & buffers)
 {
 	if (dataToDraw.PointsCount == 0)
 		return;
@@ -279,48 +271,52 @@ void Engine::renderOrdinary(DataToDraw dataToDraw, OrdinaryBuffers & buffers)
 	glVertexAttribPointer(color_index, 4, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(color_index);
 
-	
 
-	//if (dataToDraw.Indexes != nullptr)
 	glDrawElements(GL_LINES, dataToDraw.IndexesCount, GL_UNSIGNED_INT, 0);
-	//else
-	//glDrawArrays(GL_POINTS, 0, dataToDraw.PointsCount);
-
 
 	delete[] colors;
 }
 
-void Engine::renderParticleSystem(ParticleSystem & system, ParticleSystemBuffers & buffers)
+//Render dynamic points
+void Engine::renderPoints(DataToDraw & dataToDraw, DataBuffers & buffers)
 {
-	//Positions
-	glBindBuffer(GL_ARRAY_BUFFER, buffers.ParticlePositionsBuffer);
-	glBufferData(GL_ARRAY_BUFFER, system.MaxCount * 4 * sizeof(GLfloat), NULL, GL_STREAM_DRAW);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, system.Count * 4 * sizeof(GLfloat), system.Positions);
 
-	//Colors
-	glBindBuffer(GL_ARRAY_BUFFER, buffers.ParticleColorsBuffer);
-	glBufferData(GL_ARRAY_BUFFER, system.MaxCount * 4 * sizeof(GLfloat), NULL, GL_STREAM_DRAW);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, system.Count * 4 * sizeof(GLfloat), system.Colors);
+	if (dataToDraw.PointsCount == 0)
+		return;
 
-	//Vertex
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, buffers.ParticleVertexBuffer);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
-	//Positions
-	glEnableVertexAttribArray(1);
-	glBindBuffer(GL_ARRAY_BUFFER, buffers.ParticlePositionsBuffer);
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, (void*)0);
+	const int pos_index = 0;
+	const int color_index = 1;
+	GLenum error;
 
-	//Colors
-	glEnableVertexAttribArray(2);
-	glBindBuffer(GL_ARRAY_BUFFER, buffers.ParticleColorsBuffer);
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, (void*)0);
+	glBindVertexArray(buffers.vao);
 
-	//WTF
-	glVertexAttribDivisor(0, 0);
-	glVertexAttribDivisor(1, 1);
-	glVertexAttribDivisor(2, 2);
+	//Setup points
+	glBindBuffer(GL_ARRAY_BUFFER, buffers.VertexBufer);
+	glBufferData(GL_ARRAY_BUFFER, dataToDraw.PointsCount * 3 * sizeof(GLfloat), NULL, GL_STREAM_DRAW);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, dataToDraw.PointsCount * 3 * sizeof(GLfloat), dataToDraw.Points);
+	glVertexAttribPointer(pos_index, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(pos_index);
 
-	glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, system.Count);
+	//setup colors
+	GLfloat* colors = new GLfloat[dataToDraw.PointsCount * 4];
+	for (int i = 0; i < dataToDraw.PointsCount * 4; i += 4)
+	{
+		colors[i] = 1;
+		colors[i + 1] = 0;
+		colors[i + 2] = 0;
+		colors[i + 3] = 1;
+	}
+
+	glBindBuffer(GL_ARRAY_BUFFER, buffers.ColorBuffer);
+	glBufferData(GL_ARRAY_BUFFER, dataToDraw.PointsCount * 4 * sizeof(GLfloat), NULL, GL_STREAM_DRAW);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, dataToDraw.PointsCount * 4 * sizeof(GLfloat), colors);
+	glVertexAttribPointer(color_index, 4, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(color_index);
+
+
+	glDrawArrays(GL_POINTS, 0, dataToDraw.PointsCount);
+
+	delete[] colors;
+
 }

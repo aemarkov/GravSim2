@@ -13,26 +13,10 @@
 #include "Camera.h"
 #include "DataToDraw.h"
 
-class ParticleSystem
-{
-public:
-	unsigned int MaxCount;
-	unsigned int Count;
-	GLfloat* Positions;
-	GLfloat* Colors;
-};
 
-//Buffers for drawing particle system
-class ParticleSystemBuffers
-{
-public:
-	GLuint ParticleVertexBuffer;
-	GLuint ParticlePositionsBuffer;
-	GLuint ParticleColorsBuffer;
-};
 
 //Buffers for ordynary drawing
-class OrdinaryBuffers
+class DataBuffers
 {
 public:
 	GLuint VertexBufer;
@@ -49,6 +33,9 @@ public:
 	Engine(int width, int height, int major_version, int minor_version, std::function<void(DataToDraw &, float)> callback);
 	~Engine();
 
+	void Start();
+	void SetupStaticData(DataToDraw data);
+
 private:
 	
 	//system
@@ -62,14 +49,15 @@ private:
 	//Камера
 	Camera camera;
 
-	ParticleSystemBuffers particleSystem;
-	OrdinaryBuffers ordinaryBuffers;
+	DataBuffers staticBuffers;
+	DataBuffers pointsBuffers;
 		
 	//Uniform
 	GLuint gWorldLocation;
 
 	//Data to draw
-	DataToDraw dataToDraw;
+	DataToDraw staticData;
+	DataToDraw pointsData;
 
 	//Callback for update data
 	std::function<void(DataToDraw &, float)> update_callback;
@@ -80,13 +68,13 @@ private:
 	void sdl_loop();
 
 	//Buffers setup
-	void init_ordynary_buffers(OrdinaryBuffers & buffers);
-	void init_particle_system_buffer(ParticleSystemBuffers & buffers, int bufferSize);
+	void init_static_buffers(DataBuffers & buffers);
+	void init_points_buffer(DataBuffers & buffers, int bufferSize);
 
 
 	void render(GLfloat* points, unsigned int points_count, unsigned int * indexes, unsigned int indexes_count);
 	void render(DataToDraw data);
 
-	void renderOrdinary(DataToDraw dataToDraw, OrdinaryBuffers & buffers);
-	void renderParticleSystem(ParticleSystem & system, ParticleSystemBuffers & buffers);
+	void renderStatic(DataToDraw dataToDraw, DataBuffers & buffers);
+	void renderPoints(DataToDraw & dataToDraw, DataBuffers & buffers);
 };
