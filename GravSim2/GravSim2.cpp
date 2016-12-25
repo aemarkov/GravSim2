@@ -12,59 +12,28 @@
 
 void callback(DataToDraw &  data, float dt);
 
+
+DataToDraw CreateFigures();
+
 void AddFigure(std::vector<GLfloat> & points, std::vector<unsigned int> & indexes, DataToDraw & figure);
 void VectorsToData(DataToDraw& data, std::vector<GLfloat> & points, std::vector<unsigned int> & indexes);
 
 DataToDraw DrawCircle(glm::vec3 center, float radius, int count);
 DataToDraw DrawLine(glm::vec3 start, glm::vec3 end);
 
+DataToDraw dataToDraw;
+
 int main(int argc, char *argv[])
 {
+	dataToDraw = CreateFigures();
+
 	Engine engine(640, 480, 3, 3, callback);
 	return 0;
 }
 
 void callback(DataToDraw & data, float dt)
 {
-
-	/*GLfloat points[] =
-	{
-		-1, -1, 7,
-		-1, 1,  7,
-		1, 1,  7,
-		1, -1, 7
-	};
-
-	unsigned int indexes[] =
-	{
-	0, 1, 2,
-	0, 2, 3,
-	};
-
-	unsigned int indexes[] =
-	{
-		0, 1, 1, 2, 2, 0,
-		0, 2, 2, 3, 3, 0
-	};*/
-
-	const float circleRad = 1;
-	const float circleHeight = 3;
-
-	const int countInCircle = 10;
-	std::vector<GLfloat> points;
-	std::vector<unsigned int> indexes;
-
-	AddFigure(points, indexes, DrawCircle(glm::vec3(0, 0, 0), circleRad, 36));
-	AddFigure(points, indexes, DrawCircle(glm::vec3(0, 0, 0), 2*circleRad, 36));
-	AddFigure(points, indexes, DrawCircle(glm::vec3(0, 0, 0), 3*circleRad, 36));
-
-	AddFigure(points, indexes, DrawCircle(glm::vec3(0, circleHeight, 0), circleRad, 36));
-	AddFigure(points, indexes, DrawCircle(glm::vec3(0, circleHeight, 0), 2 * circleRad, 36));
-	AddFigure(points, indexes, DrawCircle(glm::vec3(0, circleHeight, 0), 3 * circleRad, 36));
-
-	AddFigure(points, indexes, DrawLine(glm::vec3(0, 0, 0), glm::vec3(circleRad*3, 0, 0)));
-	AddFigure(points, indexes, DrawLine(glm::vec3(0, 0, 0), glm::vec3(0, circleRad*3, 0)));
-	AddFigure(points, indexes, DrawLine(glm::vec3(0, 0, 0), glm::vec3(0, 0, circleRad*3)));
+	
 
 	/*AddFigure(points, indexes, DrawCircle(glm::vec3(-1, 0, 0), 1, 36));
 	AddFigure(points, indexes, DrawCircle(glm::vec3(1, 0, 0), 1, 36));
@@ -73,10 +42,35 @@ void callback(DataToDraw & data, float dt)
 	AddFigure(points, indexes, DrawLine(glm::vec3(1, 0, 1), glm::vec3(1, 0, 6)));
 	AddFigure(points, indexes, DrawLine(glm::vec3(-1, 0, 6), glm::vec3(1, 0, 6)));*/
 
-	VectorsToData(data, points, indexes);
-
+	data = dataToDraw;
 }
 
+
+DataToDraw CreateFigures()
+{
+	const float circleRad = 1;
+	const float circleHeight = 3;
+
+	const int countInCircle = 10;
+	std::vector<GLfloat> points;
+	std::vector<unsigned int> indexes;
+
+	AddFigure(points, indexes, DrawCircle(glm::vec3(0, 0, 0), circleRad, 36));
+	AddFigure(points, indexes, DrawCircle(glm::vec3(0, 0, 0), 2 * circleRad, 36));
+	AddFigure(points, indexes, DrawCircle(glm::vec3(0, 0, 0), 3 * circleRad, 36));
+
+	AddFigure(points, indexes, DrawCircle(glm::vec3(0, circleHeight, 0), circleRad, 36));
+	AddFigure(points, indexes, DrawCircle(glm::vec3(0, circleHeight, 0), 2 * circleRad, 36));
+	AddFigure(points, indexes, DrawCircle(glm::vec3(0, circleHeight, 0), 3 * circleRad, 36));
+
+	AddFigure(points, indexes, DrawLine(glm::vec3(0, 0, 0), glm::vec3(circleRad * 3, 0, 0)));
+	AddFigure(points, indexes, DrawLine(glm::vec3(0, 0, 0), glm::vec3(0, circleRad * 3, 0)));
+	AddFigure(points, indexes, DrawLine(glm::vec3(0, 0, 0), glm::vec3(0, 0, circleRad * 3)));
+
+	DataToDraw data;
+	VectorsToData(data, points, indexes);
+	return data;
+}
 
 
 void AddFigure(std::vector<GLfloat> & points,  std::vector<unsigned int> & indexes, DataToDraw & figure)

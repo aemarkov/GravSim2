@@ -13,6 +13,34 @@
 #include "Camera.h"
 #include "DataToDraw.h"
 
+class ParticleSystem
+{
+public:
+	unsigned int MaxCount;
+	unsigned int Count;
+	GLfloat* Positions;
+	GLfloat* Colors;
+};
+
+//Buffers for drawing particle system
+class ParticleSystemBuffers
+{
+public:
+	GLuint ParticleVertexBuffer;
+	GLuint ParticlePositionsBuffer;
+	GLuint ParticleColorsBuffer;
+};
+
+//Buffers for ordynary drawing
+class OrdinaryBuffers
+{
+public:
+	GLuint VertexBufer;
+	GLuint ColorBuffer;
+	GLuint IndexBuffer;
+	GLuint vao;
+};
+
 //Упрощает работу с OpengGL и SDL
 class Engine
 {
@@ -34,9 +62,9 @@ private:
 	//Камера
 	Camera camera;
 
-	//Буферы для создания вершин
-	GLuint vbo[2], ibo[1], vao[1];
-
+	ParticleSystemBuffers particleSystem;
+	OrdinaryBuffers ordinaryBuffers;
+		
 	//Uniform
 	GLuint gWorldLocation;
 
@@ -49,9 +77,16 @@ private:
 	//Methods
 	bool init_sdl(int width, int height, int major_version, int minor_version);
 	void init_opengl();
-	void init_buffers();
 	void sdl_loop();
+
+	//Buffers setup
+	void init_ordynary_buffers(OrdinaryBuffers & buffers);
+	void init_particle_system_buffer(ParticleSystemBuffers & buffers, int bufferSize);
+
 
 	void render(GLfloat* points, unsigned int points_count, unsigned int * indexes, unsigned int indexes_count);
 	void render(DataToDraw data);
+
+	void renderOrdinary(DataToDraw dataToDraw, OrdinaryBuffers & buffers);
+	void renderParticleSystem(ParticleSystem & system, ParticleSystemBuffers & buffers);
 };
