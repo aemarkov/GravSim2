@@ -7,6 +7,7 @@ class DataToDraw
 {
 public:
 	GLfloat* Points;
+	GLfloat* Colors;
 	unsigned int PointsCount;
 	unsigned int* Indexes;
 	unsigned int IndexesCount;

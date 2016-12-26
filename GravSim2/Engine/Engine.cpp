@@ -125,7 +125,7 @@ void Engine::init_points_buffer(DataBuffers & buffers, int bufferSize)
 
 	glGenBuffers(1, &buffers.ColorBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, buffers.ColorBuffer);
-	glBufferData(GL_ARRAY_BUFFER, bufferSize * 4 * sizeof(GLfloat), NULL, GL_STREAM_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, bufferSize * 1 * sizeof(GLfloat), NULL, GL_STREAM_DRAW);
 }
 
 ////////////////////////////////////////////// EVENT SYSTEM ///////////////////////////////////////////////////////////
@@ -258,17 +258,14 @@ void Engine::renderStatic(DataToDraw dataToDraw, DataBuffers & buffers)
 
 	//setup colors
 	GLfloat* colors = new GLfloat[dataToDraw.PointsCount * 4];
-	for (int i = 0; i < dataToDraw.PointsCount * 4; i += 4)
+	for (int i = 0; i < dataToDraw.PointsCount; i++)
 	{
-		colors[i] = 1;
-		colors[i + 1] = 0;
-		colors[i + 2] = 0;
-		colors[i + 3] = 1;
+		colors[i] = 255;
 	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, buffers.ColorBuffer);
-	glBufferData(GL_ARRAY_BUFFER, dataToDraw.PointsCount * 4 * sizeof(GLfloat), colors, GL_STATIC_DRAW);
-	glVertexAttribPointer(color_index, 4, GL_FLOAT, GL_FALSE, 0, 0);
+	glBufferData(GL_ARRAY_BUFFER, dataToDraw.PointsCount * 1 * sizeof(GLfloat), colors, GL_STATIC_DRAW);
+	glVertexAttribPointer(color_index, 1, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(color_index);
 
 
@@ -299,24 +296,24 @@ void Engine::renderPoints(DataToDraw & dataToDraw, DataBuffers & buffers)
 	glEnableVertexAttribArray(pos_index);
 
 	//setup colors
-	GLfloat* colors = new GLfloat[dataToDraw.PointsCount * 4];
+	/*GLfloat* colors = new GLfloat[dataToDraw.PointsCount * 4];
 	for (int i = 0; i < dataToDraw.PointsCount * 4; i += 4)
 	{
 		colors[i] = 1;
-		colors[i + 1] = 0;
-		colors[i + 2] = 0;
+		colors[i + 1] = 1;
+		colors[i + 2] = 1;
 		colors[i + 3] = 1;
-	}
+	}*/
 
 	glBindBuffer(GL_ARRAY_BUFFER, buffers.ColorBuffer);
-	glBufferData(GL_ARRAY_BUFFER, dataToDraw.PointsCount * 4 * sizeof(GLfloat), NULL, GL_STREAM_DRAW);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, dataToDraw.PointsCount * 4 * sizeof(GLfloat), colors);
-	glVertexAttribPointer(color_index, 4, GL_FLOAT, GL_FALSE, 0, 0);
+	glBufferData(GL_ARRAY_BUFFER, dataToDraw.PointsCount * 1 * sizeof(GLfloat), NULL, GL_STREAM_DRAW);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, dataToDraw.PointsCount * 1 * sizeof(GLfloat), dataToDraw.Colors);
+	glVertexAttribPointer(color_index, 1, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(color_index);
 
 
 	glDrawArrays(GL_POINTS, 0, dataToDraw.PointsCount);
 
-	delete[] colors;
+	//delete[] colors;
 
 }
