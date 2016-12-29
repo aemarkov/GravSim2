@@ -13,7 +13,7 @@
 #include "Camera.h"
 #include "DataToDraw.h"
 
-
+#define COLOR(r,g,b)(r | g << 8 | b << 16);
 
 //Buffers for ordynary drawing
 class DataBuffers

@@ -10,35 +10,77 @@
 #include "Engine\Engine.h"
 #include "Engine\DataToDraw.h"
 #include "Engine\FiguresCreator.h"
+#include "Reader\Reader.h"
 
 
 void callback(DataToDraw &  data, float dt);
-
-
 DataToDraw CreateFigures();
 void CreatePoints(int count);
-
+void FrameToPoints(Frame & frame, DataToDraw & data);
 
 DataToDraw dataToDraw;
 DataToDraw points;
 
+Reader reader;
+unsigned int PointsCount;
+Frame* frame;
+
+unsigned int currentRenderFrame = 0;
+unsigned int framesPerRenderFrame = 1;
+
 int main(int argc, char *argv[])
 {
-	CreatePoints(1000000);
+	if (argc != 2)
+	{
+		std::cout << "Usage: GravSim2.exe <input file>";
+		return -1;
+	}
+
+	try
+	{
+		PointsCount = reader.Open(argv[1]);
+		frame = reader.ReadFrame();
+		if (frame == nullptr)
+			throw std::string("No frames in file");
+
+	}
+	catch (std::string error)
+	{
+		std::cout << "Exception:\n";
+		std::cout << error;
+	}
+		
+
 	dataToDraw = CreateFigures();
+	CreatePoints(PointsCount);
+	FrameToPoints(*frame, points);
 
 	Engine engine(640, 480, 3, 3, callback);
 	engine.SetupStaticData(dataToDraw);
 	engine.Start();
 
 
+	delete frame;
 	return 0;
 }
 
 void callback(DataToDraw & data, float dt)
 {
-	//data = dataToDraw;
-	data = points;
+ 	data = points;
+
+	currentRenderFrame++;
+
+	if (currentRenderFrame == framesPerRenderFrame)
+	{
+		if (reader.ReadFrame(frame))
+		{
+			std::cout << frame->Dt << "\n";
+			FrameToPoints(*frame, points);
+		}
+
+		currentRenderFrame = 0;
+	}
+
 }
 
 
@@ -75,7 +117,7 @@ void CreatePoints(int count)
 	points.PointsCount = count;
 
 
-	for (int i = 0; i < count*3; i++)
+	/*for (int i = 0; i < count*3; i++)
 	{
 		points.Points[i] = (rand() % 600) / 100.0 - 3;
 	}
@@ -83,5 +125,21 @@ void CreatePoints(int count)
 	for (int i = 0; i < count; i ++)
 	{
 		points.Colors[i] = 255;
-	}
+	}*/
 } 
+
+void FrameToPoints(Frame & frame, DataToDraw & data)
+{
+	unsigned int pointCnt = 0;
+	unsigned int colorCnt = 0;
+
+	for (unsigned int i = 0; i < frame.Count; i++)
+	{
+		data.Points[pointCnt] = frame.Points[i].X;
+		data.Points[++pointCnt] = frame.Points[i].Y;
+		data.Points[++pointCnt] = frame.Points[i].Z;
+		++pointCnt;
+
+		data.Colors[colorCnt++] = COLOR(255,2565,255);
+	}
+}

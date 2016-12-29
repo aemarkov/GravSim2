@@ -19,6 +19,9 @@
     <Filter Include="shaders">
       <UniqueIdentifier>{c0d5d523-7c08-4eba-974f-036999736521}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Reader">
+      <UniqueIdentifier>{dfbe4d38-f48c-44d0-93d7-412806c6395e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -48,6 +51,9 @@
     <ClInclude Include="Engine\FiguresCreator.h">
       <Filter>Engine</Filter>
     </ClInclude>
+    <ClInclude Include="Reader\Reader.h">
+      <Filter>Reader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -73,6 +79,9 @@
     </ClCompile>
     <ClCompile Include="Engine\FiguresCreator.cpp">
       <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Reader\Reader.cpp">
+      <Filter>Reader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

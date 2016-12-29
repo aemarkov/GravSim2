@@ -4,6 +4,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GravSim2", "GravSim2\GravSim2.vcxproj", "{625E8A7B-CD39-4436-9FDB-066C5B6C5AFD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EC70A19F-382D-4E70-A6C4-89DACCE4D78C} = {EC70A19F-382D-4E70-A6C4-89DACCE4D78C}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DataTypes", "DataTypes\DataTypes.vcxproj", "{EC70A19F-382D-4E70-A6C4-89DACCE4D78C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MPIGrav", "MPIGrav\MPIGrav.vcxproj", "{388CBBD8-1DDE-42B2-BFCE-9D0D9F33D1A3}"
 EndProject
 Global
 	GlobalSection(Performance) = preSolution
@@ -24,6 +31,22 @@ Global
 		{625E8A7B-CD39-4436-9FDB-066C5B6C5AFD}.Release|x64.Build.0 = Release|x64
 		{625E8A7B-CD39-4436-9FDB-066C5B6C5AFD}.Release|x86.ActiveCfg = Release|Win32
 		{625E8A7B-CD39-4436-9FDB-066C5B6C5AFD}.Release|x86.Build.0 = Release|Win32
+		{EC70A19F-382D-4E70-A6C4-89DACCE4D78C}.Debug|x64.ActiveCfg = Debug|x64
+		{EC70A19F-382D-4E70-A6C4-89DACCE4D78C}.Debug|x64.Build.0 = Debug|x64
+		{EC70A19F-382D-4E70-A6C4-89DACCE4D78C}.Debug|x86.ActiveCfg = Debug|Win32
+		{EC70A19F-382D-4E70-A6C4-89DACCE4D78C}.Debug|x86.Build.0 = Debug|Win32
+		{EC70A19F-382D-4E70-A6C4-89DACCE4D78C}.Release|x64.ActiveCfg = Release|x64
+		{EC70A19F-382D-4E70-A6C4-89DACCE4D78C}.Release|x64.Build.0 = Release|x64
+		{EC70A19F-382D-4E70-A6C4-89DACCE4D78C}.Release|x86.ActiveCfg = Release|Win32
+		{EC70A19F-382D-4E70-A6C4-89DACCE4D78C}.Release|x86.Build.0 = Release|Win32
+		{388CBBD8-1DDE-42B2-BFCE-9D0D9F33D1A3}.Debug|x64.ActiveCfg = Debug|x64
+		{388CBBD8-1DDE-42B2-BFCE-9D0D9F33D1A3}.Debug|x64.Build.0 = Debug|x64
+		{388CBBD8-1DDE-42B2-BFCE-9D0D9F33D1A3}.Debug|x86.ActiveCfg = Debug|Win32
+		{388CBBD8-1DDE-42B2-BFCE-9D0D9F33D1A3}.Debug|x86.Build.0 = Debug|Win32
+		{388CBBD8-1DDE-42B2-BFCE-9D0D9F33D1A3}.Release|x64.ActiveCfg = Release|x64
+		{388CBBD8-1DDE-42B2-BFCE-9D0D9F33D1A3}.Release|x64.Build.0 = Release|x64
+		{388CBBD8-1DDE-42B2-BFCE-9D0D9F33D1A3}.Release|x86.ActiveCfg = Release|Win32
+		{388CBBD8-1DDE-42B2-BFCE-9D0D9F33D1A3}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

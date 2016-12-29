@@ -296,13 +296,10 @@ void Engine::renderPoints(DataToDraw & dataToDraw, DataBuffers & buffers)
 	glEnableVertexAttribArray(pos_index);
 
 	//setup colors
-	/*GLfloat* colors = new GLfloat[dataToDraw.PointsCount * 4];
-	for (int i = 0; i < dataToDraw.PointsCount * 4; i += 4)
+	/*GLfloat* colors = new GLfloat[dataToDraw.PointsCount];
+	for (int i = 0; i < dataToDraw.PointsCount * 1; i++)
 	{
-		colors[i] = 1;
-		colors[i + 1] = 1;
-		colors[i + 2] = 1;
-		colors[i + 3] = 1;
+		colors[i] = COLOR(255,255,255);
 	}*/
 
 	glBindBuffer(GL_ARRAY_BUFFER, buffers.ColorBuffer);
