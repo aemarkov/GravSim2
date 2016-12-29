@@ -14,10 +14,10 @@ class GravSim
 public:
 
 	GravSim();
-	GravSim(int count, glm::vec3 center, glm::vec3 radius);
+	GravSim(int count, float pointMass, float G, float minDist, glm::vec3 center, glm::vec3 radius);
 	~GravSim();
 
-	void Init(int count, glm::vec3 center, glm::vec3 radius);
+	void Init(int count, float pointMass, float G, float minDist, glm::vec3 center, glm::vec3 radius);
 
 	void CalcFrameSingleThread(float dt);
 	Points* GetPoints();
@@ -25,6 +25,9 @@ public:
 private:
 
 	Points points;
+	VectorArray forces;
+	float G;
+	float minDist;
 
 	//Создает вектор заданного размера
 	void init_vector(VectorArray * array, int count);

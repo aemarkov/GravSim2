@@ -26,7 +26,7 @@ unsigned int PointsCount;
 Frame* frame;
 
 unsigned int currentRenderFrame = 0;
-unsigned int framesPerRenderFrame = 1;
+unsigned int framesPerRenderFrame = 3;
 
 int main(int argc, char *argv[])
 {

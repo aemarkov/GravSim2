@@ -1,7 +1,7 @@
 #include "Engine.h"
 
 Engine::Engine(int width, int height, int major_version, int minor_version, std::function<void(DataToDraw &, float)> callback)
-	:camera(width / height, 45.0, 0.1, 100),
+	:camera(width / height, 45.0, 0.5, 5000),
 	staticData(),
 	pointsData(),
 	update_callback(callback)
@@ -28,6 +28,9 @@ Engine::Engine(int width, int height, int major_version, int minor_version, std:
 	gWorldLocation = shader.GetUniformLocation("gWorld");
 
 	shader.UseProgram();
+
+	camera.SetPosition(0, 100, 0);
+	camera.SetRotationAngles(0, -85, 0);
 }
 
 Engine::~Engine()
