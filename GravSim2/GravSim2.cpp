@@ -74,7 +74,7 @@ void callback(DataToDraw & data, float dt)
 	{
 		if (reader.ReadFrame(frame))
 		{
-			std::cout << frame->Dt << "\n";
+			//std::cout << frame->Dt << "\n";
 			FrameToPoints(*frame, points);
 		}
 

@@ -1,6 +1,9 @@
 #include <iostream>
 #include "Writer\Writer.h"
 #include "Frame.h"
+#include "Simulator\GravSim.h"
+
+void PointsToFrame(Points* points, Frame & frame, float dt);
 
 int main(int argc, char** argv)
 {
@@ -10,27 +13,41 @@ int main(int argc, char** argv)
 		return -1;
 	}
 
-	int count = 3000;
-	Writer writer(count, argv[1]);
+	int count = 100;
+	int stepsCount = 1000;
+	float dt = 1;
 
+	GravSim sim (count, glm::vec3(0, 0, 0), glm::vec3(2, 2, 2));
+	Writer writer(count, argv[1]);
 	Frame frame;
+	
 	frame.Points = new Point[count];
 	frame.Count = count;
-	//frame.Dt = 1;
-
-	for (int f= 0; f < 1000; f++)
+	
+	for (int step = 0; step < stepsCount; step++)
 	{
-		for (int i = 0; i < count; i++)
-		{
-			frame.Points[i].X = (rand() % 600) / 100.0 - 3;
-			frame.Points[i].Y = (rand() % 600) / 100.0 - 3;
-			frame.Points[i].Z = (rand() % 600) / 100.0 - 3;
-		}
+		sim.CalcFrameSingleThread(dt);
+		Points* points = sim.GetPoints();
 
-		frame.Dt = f;
+		PointsToFrame(points, frame, dt);
 		writer.WriteFrame(frame);
 	}
 
     return 0;
 }
 
+void PointsToFrame(Points* points, Frame & frame, float dt)
+{
+	for (int i = 0; i < points->Count; i++)
+	{
+		frame.Points[i].X = points->Pos.X[i];
+		frame.Points[i].Y = points->Pos.Y[i];
+		frame.Points[i].Z = points->Pos.Z[i];
+
+		//std::cout << frame.Points[i].X << " " << frame.Points[i].Y << " " << frame.Points[i].Z << "\n";
+	}
+
+	//std::cout << "\n\n";
+
+	frame.Dt = dt;
+}

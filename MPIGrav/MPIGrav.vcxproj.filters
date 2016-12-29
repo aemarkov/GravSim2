@@ -16,6 +16,9 @@
     <Filter Include="Writer">
       <UniqueIdentifier>{6ae1d365-0dc0-4ffa-bfa5-71166dc18765}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Simulator">
+      <UniqueIdentifier>{15bfa921-15cc-4213-88f2-cd36c8e11978}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -30,6 +33,15 @@
     <ClInclude Include="Writer\Writer.h">
       <Filter>Writer</Filter>
     </ClInclude>
+    <ClInclude Include="Simulator\GravSim.h">
+      <Filter>Simulator</Filter>
+    </ClInclude>
+    <ClInclude Include="Simulator\Points.h">
+      <Filter>Simulator</Filter>
+    </ClInclude>
+    <ClInclude Include="Simulator\VectorArray.h">
+      <Filter>Simulator</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -40,6 +52,12 @@
     </ClCompile>
     <ClCompile Include="Writer\Writer.cpp">
       <Filter>Writer</Filter>
+    </ClCompile>
+    <ClCompile Include="Simulator\GravSim.cpp">
+      <Filter>Simulator</Filter>
+    </ClCompile>
+    <ClCompile Include="Simulator\VectorArray.cpp">
+      <Filter>Simulator</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
