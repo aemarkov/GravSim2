@@ -9,11 +9,15 @@ void PointsToFrame(Particle* points, int particleCount,  DataTypes::Frame & fram
 
 int main(int argc, char** argv)
 {
+
 	if (argc != 2)
 	{
 		std::cout << "Usage:: MPIGrav.exe <output file>";
 		return -1;
 	}
+
+
+	omp_set_num_threads(4);
 
 	// ....... ѕараметры симул€ции ...........
 	int count = 1000;
@@ -50,13 +54,13 @@ int main(int argc, char** argv)
 
 	for (int step = 0; step < stepsCount; step++)
 	{
-		sim.CalcFrameSingleThread(dt);
+		sim.CalcFrameOpenMP(dt);
 
-		Particle* points = sim.GetPoints();
+		/*Particle* points = sim.GetPoints();
 		int count = sim.GetPointsCount();
 
 		PointsToFrame(points, count, frame, dt);
-		writer.WriteFrame(frame);
+		writer.WriteFrame(frame);*/
 
 		if (step%perc10 == 0)
 			std::cout << step / perc10 * 10 << "%\n";

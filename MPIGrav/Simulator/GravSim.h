@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <glm/glm.hpp>
 #include <iostream>>
+#include <math.h>
 
 /*!
  * \brief Симулятор гравитации - решение задачи n-тел

@@ -91,26 +91,33 @@ void GravSim::CalcFrameSingleThread(float dt)
 		points[i].Pos[0] += points[i].Speed[0];
 		points[i].Pos[1] += points[i].Speed[1];
 		points[i].Pos[2] += points[i].Speed[2];
+
+		//Обнуляем силы
+		points[i].Force[0] = 0;
+		points[i].Force[1] = 0;
+		points[i].Force[2] = 0;
 	}
 }
 
+
 void GravSim::CalcFrameOpenMP(float dt)
 {
-	/*//Расчет сил
+	//Расчет сил
 	float f;
 
 	#pragma omp parallel for
-	for (int i = 0; i < points.Count; i++)
+	for (int i = 0; i < pointsCount; i++)
 	{
 		//Расчет модуля и направления равнодействуюшей
-		for (int j = 0; j < points.Count; j++)
+		for (int j = 0; j < pointsCount; j++)
 		{
 			if (i != j)
 			{
+
 				//Расчет расстояний
-				float dx = points.Pos.X[j] - points.Pos.X[i];
-				float dy = points.Pos.Y[j] - points.Pos.Y[i];
-				float dz = points.Pos.Z[j] - points.Pos.Z[i];
+				float dx = points[j].Pos[0] - points[i].Pos[0];
+				float dy = points[j].Pos[1] - points[i].Pos[1];
+				float dz = points[j].Pos[2] - points[i].Pos[2];
 
 				float r_2 = (dx*dx + dy*dy + dz*dz);
 				if (r_2 < minDist)
@@ -120,31 +127,37 @@ void GravSim::CalcFrameOpenMP(float dt)
 				float r_1 = sqrt(r_2);
 
 				//Расчет сил
-				f = G*points.Mass[i] * points.Mass[j] * r_2;
+				f = G*points[i].mass * points[j].mass * r_2;
 
-				forces.X[i] += f*dx*r_1;
-				forces.Y[i] += f*dy*r_1;
-				forces.Z[i] += f*dz*r_1;
+				float fx = f*dx*r_1;
+				float fy = f*dy*r_1;
+				float fz = f*dz*r_1;
+
+				points[i].Force[0] += fx;
+				points[i].Force[1] += fy;
+				points[i].Force[2] += fz;
 			}
 		}
 	}
 
 	//Расчет перемещений
 	#pragma omp parallel for
-	for (int i = 0; i < points.Count; i++)
+	for (int i = 0; i < pointsCount; i++)
 	{
-		points.Speed.X[i] += forces.X[i] / points.Mass[i];
-		points.Speed.Y[i] += forces.Y[i] / points.Mass[i];
-		points.Speed.Z[i] += forces.Z[i] / points.Mass[i];
+		points[i].Speed[0] += points[i].Force[0] / points[i].mass;
+		points[i].Speed[1] += points[i].Force[1] / points[i].mass;
+		points[i].Speed[2] += points[i].Force[2] / points[i].mass;
 
-		points.Pos.X[i] += points.Speed.X[i];
-		points.Pos.Y[i] += points.Speed.Y[i];
-		points.Pos.Z[i] += points.Speed.Z[i];
 
-		forces.X[i] = 0;
-		forces.Y[i] = 0;
-		forces.Z[i] = 0;
-	}*/
+		points[i].Pos[0] += points[i].Speed[0];
+		points[i].Pos[1] += points[i].Speed[1];
+		points[i].Pos[2] += points[i].Speed[2];
+
+		//Обнуляем силы
+		points[i].Force[0] = 0;
+		points[i].Force[1] = 0;
+		points[i].Force[2] = 0;
+	}
 }
 
 
