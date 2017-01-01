@@ -50,7 +50,7 @@ int main(int argc, char** argv)
 
 	for (int step = 0; step < stepsCount; step++)
 	{
-		sim.CalcFrameSingleThread(dt);
+		sim.CalcFrameOpenMP(dt);
 		Points* points = sim.GetPoints();
 
 		PointsToFrame(points, frame, dt);
@@ -66,7 +66,7 @@ int main(int argc, char** argv)
 	
 	std::cout << "Total duration: " << duration << "\n";
 	std::cout << "Press any key...\n";
-	//std::cin.get();
+	std::cin.get();
 
     return 0;
 }

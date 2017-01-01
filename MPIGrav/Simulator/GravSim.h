@@ -20,6 +20,8 @@ public:
 	void Init(int count, float pointMass, float G, float minDist, glm::vec3 center, glm::vec3 radius);
 
 	void CalcFrameSingleThread(float dt);
+	void CalcFrameOpenMP(float dt);
+
 	Points* GetPoints();
 
 private:
