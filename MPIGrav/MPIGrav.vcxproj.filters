@@ -39,6 +39,9 @@
     <ClInclude Include="Simulator\Particle.h">
       <Filter>Simulator</Filter>
     </ClInclude>
+    <ClInclude Include="Simulator\Vec3.h">
+      <Filter>Simulator</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

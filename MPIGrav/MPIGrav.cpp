@@ -54,7 +54,7 @@ int main(int argc, char** argv)
 
 	for (int step = 0; step < stepsCount; step++)
 	{
-		sim.CalcFrameSingleThread(dt);
+		sim.CalcFrameOpenMP(dt);
 
 		Particle* points = sim.GetPoints();
 		int count = sim.GetPointsCount();

@@ -29,7 +29,11 @@ public:
 
 private:
 
+	int numThreads;
+
 	Particle* points;
+	float* tempForces;
+
 	int pointsCount;
 
 	float G;
