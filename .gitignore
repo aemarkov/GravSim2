@@ -13,6 +13,9 @@
 # Libraries downloads
 _libs/
 
+#generated points animation
+points.dat
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/

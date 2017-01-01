@@ -44,13 +44,15 @@ void GravSim::Init(int count, float pointMass, float G, float minDist, glm::vec3
 void GravSim::CalcFrameSingleThread(float dt)
 {
 	//Расчет сил
-	float f;
 
 	for (int i = 0; i < pointsCount; i++)
 	{
 		//Расчет модуля и направления равнодействуюшей
-		for (int j = i + 1; j < pointsCount; j++)
+		for (int j = i+1; j < pointsCount; j++)
 		{
+			//if (i == j)
+			//	continue;
+
 			//Расчет расстояний
 			float dx = points[j].Pos[0] - points[i].Pos[0];
 			float dy = points[j].Pos[1] - points[i].Pos[1];
@@ -64,7 +66,7 @@ void GravSim::CalcFrameSingleThread(float dt)
 			float r_1 = sqrt(r_2);
 
 			//Расчет сил
-			f = G*points[i].mass * points[j].mass * r_2;
+			float f = G*points[i].mass * points[j].mass * r_2;
 
 			float fx = f*dx*r_1;
 			float fy = f*dy*r_1;
@@ -74,9 +76,9 @@ void GravSim::CalcFrameSingleThread(float dt)
 			points[i].Force[1] += fy;
 			points[i].Force[2] += fz;
 
-			points[j].Force[0] += fx;
-			points[j].Force[1] += fy;
-			points[j].Force[2] += fz;
+			points[j].Force[0] -= fx;
+			points[j].Force[1] -= fy;
+			points[j].Force[2] -= fz;
 		}
 	}
 
@@ -103,9 +105,7 @@ void GravSim::CalcFrameSingleThread(float dt)
 void GravSim::CalcFrameOpenMP(float dt)
 {
 	//Расчет сил
-	float f;
-
-	#pragma omp parallel for
+	//#pragma omp parallel for
 	for (int i = 0; i < pointsCount; i++)
 	{
 		//Расчет модуля и направления равнодействуюшей
@@ -127,7 +127,7 @@ void GravSim::CalcFrameOpenMP(float dt)
 				float r_1 = sqrt(r_2);
 
 				//Расчет сил
-				f = G*points[i].mass * points[j].mass * r_2;
+				float f = G*points[i].mass * points[j].mass * r_2;
 
 				float fx = f*dx*r_1;
 				float fy = f*dy*r_1;
@@ -141,7 +141,7 @@ void GravSim::CalcFrameOpenMP(float dt)
 	}
 
 	//Расчет перемещений
-	#pragma omp parallel for
+	//#pragma omp parallel for
 	for (int i = 0; i < pointsCount; i++)
 	{
 		points[i].Speed[0] += points[i].Force[0] / points[i].mass;

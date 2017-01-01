@@ -54,13 +54,13 @@ int main(int argc, char** argv)
 
 	for (int step = 0; step < stepsCount; step++)
 	{
-		sim.CalcFrameOpenMP(dt);
+		sim.CalcFrameSingleThread(dt);
 
-		/*Particle* points = sim.GetPoints();
+		Particle* points = sim.GetPoints();
 		int count = sim.GetPointsCount();
 
 		PointsToFrame(points, count, frame, dt);
-		writer.WriteFrame(frame);*/
+		writer.WriteFrame(frame);
 
 		if (step%perc10 == 0)
 			std::cout << step / perc10 * 10 << "%\n";
