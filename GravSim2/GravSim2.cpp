@@ -12,6 +12,8 @@
 #include "Engine\FiguresCreator.h"
 #include "Reader\Reader.h"
 
+using namespace DataTypes;
+
 
 void callback(DataToDraw &  data, float dt);
 DataToDraw CreateFigures();
@@ -74,7 +76,7 @@ void callback(DataToDraw & data, float dt)
 	{
 		if (reader.ReadFrame(frame))
 		{
-			//std::cout << frame->Dt << "\n";
+			//std::cout << frame->Points[0].X << " "<< frame->Points[0].Y << " " << frame->Points[0].Z << " "  << "\n";
 			FrameToPoints(*frame, points);
 		}
 

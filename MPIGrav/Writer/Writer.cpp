@@ -37,10 +37,10 @@ void Writer::Open(unsigned int pointsCount, char * filename)
 * \brief «аписывает кадр - массив точек и врем€ относительно
 * предыдущего кадра
 */
-void Writer::WriteFrame(Frame & frame)
+void Writer::WriteFrame(DataTypes::Frame & frame)
 {
 	stream.write((const char*)&frame.Dt, sizeof(frame.Dt));
-	stream.write((const char*)frame.Points, sizeof(Point)*pointsCount);
+	stream.write((const char*)frame.Points, sizeof(DataTypes::Point)*pointsCount);
 }
 
 void Writer::Close()

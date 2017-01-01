@@ -136,7 +136,7 @@ void Engine::init_points_buffer(DataBuffers & buffers, int bufferSize)
 //Main drawing and event cycle
 void Engine::sdl_loop()
 {
-	const float speed = 0.1;
+	const float speed =1;
 
 	bool is_running = true;
 	while (is_running) {

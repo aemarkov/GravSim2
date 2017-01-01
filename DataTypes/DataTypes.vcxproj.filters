@@ -29,9 +29,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Point.cpp">
-      <Filter>Point</Filter>
-    </ClCompile>
     <ClCompile Include="Frame.cpp">
       <Filter>Point</Filter>
     </ClCompile>

@@ -1,10 +1,11 @@
 #ifndef __GRAVSIM_H__
 #define __GRAVSIM_H__
 
-#include "Points.h"
+#include "Particle.h"
 #include <omp.h>
 #include <cstdlib>
 #include <glm/glm.hpp>
+#include <iostream>>
 
 /*!
  * \brief Симулятор гравитации - решение задачи n-тел
@@ -22,24 +23,16 @@ public:
 	void CalcFrameSingleThread(float dt);
 	void CalcFrameOpenMP(float dt);
 
-	Points* GetPoints();
+	Particle* GetPoints();
+	int GetPointsCount();
 
 private:
 
-	Points points;
-	VectorArray forces;
+	Particle* points;
+	int pointsCount;
+
 	float G;
 	float minDist;
-
-	//Создает вектор заданного размера
-	void init_vector(VectorArray * array, int count);
-
-	//Создает массив Float  заданного размера
-	void init_array(float** arr, int count, float default=0);
-
-	//Задает рандомное значение для элементов вектора в заданном радиусе от (0,0,0)
-	void set_random_values(VectorArray* values, glm::vec3 radius, glm::vec3 center, int count);
-
 };
 
 #endif

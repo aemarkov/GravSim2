@@ -50,10 +50,10 @@ void Reader::Close()
 /*!
 * \brief Ñ÷èòûâàåò îäèí êàäð èç ôàéëà
 */
-Frame*  Reader::ReadFrame()
+DataTypes::Frame*  Reader::ReadFrame()
 {
-	Frame* frame = new Frame();
-	frame->Points = new Point[pointsCount];
+	DataTypes::Frame* frame = new DataTypes::Frame();
+	frame->Points = new DataTypes::Point[pointsCount];
 
 	if (!ReadFrame(frame))
 		return nullptr;
@@ -70,14 +70,14 @@ Frame*  Reader::ReadFrame()
 * ÓÁÅÄÈÒÅÑÜ, ×ÒÎ ÂÎ FRAME ÂÛÄÅËÅÍ ÁÓÔÅÐ
 * POINTS ÄÎÑÒÀÒÎ×ÍÎÃÎ ÐÀÇÌÅÐÀ
 */
-bool Reader::ReadFrame(Frame * frame)
+bool Reader::ReadFrame(DataTypes::Frame * frame)
 {
 	if (stream.eof())
 		return false;
 
 	stream.read((char*)&frame->Dt, sizeof(frame->Dt));
 	frame->Count = pointsCount;
-	stream.read((char*)frame->Points, sizeof(Point)*pointsCount);
+	stream.read((char*)frame->Points, sizeof(DataTypes::Point)*pointsCount);
 
 	return true;
 }

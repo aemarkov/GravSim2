@@ -1,11 +1,15 @@
 #ifndef __POINT_H__
 #define __POINT_H__
 
-//Point struct for saving in file
-struct Point
+namespace DataTypes
 {
-	float X, Y, Z;
-	float v;
-};
+
+	//Point struct for saving in file
+	struct Point
+	{
+		float X, Y, Z;
+		float v;
+	};
+}
 
 #endif

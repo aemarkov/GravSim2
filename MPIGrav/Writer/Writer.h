@@ -28,7 +28,7 @@ public:
 	 * ВНИМАНИЕ: УБЕДИТЕСЬ, ЧТО БУФЕР POINTS В FRAME РАЗМЕРОМ
 	 * pointsCount
 	 */
-	void WriteFrame(Frame & frame);
+	void WriteFrame(DataTypes::Frame & frame);
 
 	void Close();
 

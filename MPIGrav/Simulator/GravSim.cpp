@@ -11,20 +11,34 @@ GravSim::GravSim(int count, float pointMass, float G, float minDist, glm::vec3 c
 
 GravSim::~GravSim()
 {
+	delete[] points;
 }
 
 void GravSim::Init(int count, float pointMass, float G, float minDist, glm::vec3 center, glm::vec3 radius)
 {
-	points.Count = count;
-	init_array(&points.Mass, count, pointMass);
-	init_vector(&points.Pos, count);
-	init_vector(&points.Speed, count);
-	init_vector(&forces, count);
+	pointsCount = count;
+	points = new Particle[count];
+	
+	for (int i = 0; i < count; i++)
+	{
+		Particle* point = &points[i];
+		
+		for (int j = 0; j < 3; j++)
+			point->Force[j] = 0;
+
+		for (int j = 0; j < 3; j++)
+			point->Speed[j] = 0;
+
+		point->mass = pointMass;
+
+
+		point->Pos[0] = (float)rand() / RAND_MAX * 2 * radius.x - radius.x + center.x;
+		point->Pos[1] = (float)rand() / RAND_MAX * 2 * radius.y - radius.y + center.y;
+		point->Pos[2] = (float)rand() / RAND_MAX * 2 * radius.z - radius.y + center.z;
+	}
 
 	this->G = G;
 	this->minDist = minDist;
-
-	set_random_values(&points.Pos, radius, center, count);
 }
 
 void GravSim::CalcFrameSingleThread(float dt)
@@ -32,16 +46,15 @@ void GravSim::CalcFrameSingleThread(float dt)
 	//Расчет сил
 	float f;
 
-	for (int i = 0; i < points.Count; i++)
+	for (int i = 0; i < pointsCount; i++)
 	{
 		//Расчет модуля и направления равнодействуюшей
-		for (int j = i + 1; j < points.Count; j++)
+		for (int j = i + 1; j < pointsCount; j++)
 		{
-
 			//Расчет расстояний
-			float dx = points.Pos.X[j] - points.Pos.X[i];
-			float dy = points.Pos.Y[j] - points.Pos.Y[i];
-			float dz = points.Pos.Z[j] - points.Pos.Z[i];
+			float dx = points[j].Pos[0] - points[i].Pos[0];
+			float dy = points[j].Pos[1] - points[i].Pos[1];
+			float dz = points[j].Pos[2] - points[i].Pos[2];
 
 			float r_2 = (dx*dx + dy*dy + dz*dz);
 			if (r_2 < minDist)
@@ -51,43 +64,39 @@ void GravSim::CalcFrameSingleThread(float dt)
 			float r_1 = sqrt(r_2);
 
 			//Расчет сил
-			f = G*points.Mass[i] * points.Mass[j] * r_2;
+			f = G*points[i].mass * points[j].mass * r_2;
 
 			float fx = f*dx*r_1;
 			float fy = f*dy*r_1;
 			float fz = f*dz*r_1;
 
-			forces.X[i] += fx;
-			forces.Y[i] += fy;
-			forces.Z[i] += fz;
+			points[i].Force[0] += fx;
+			points[i].Force[1] += fy;
+			points[i].Force[2] += fz;
 
-			forces.X[j] += fx;
-			forces.Y[j] += fy;
-			forces.Z[j] += fz;
-
+			points[j].Force[0] += fx;
+			points[j].Force[1] += fy;
+			points[j].Force[2] += fz;
 		}
 	}
 
 	//Расчет перемещений
-	for (int i = 0; i < points.Count; i++)
+	for (int i = 0; i < pointsCount; i++)
 	{
-		points.Speed.X[i] += forces.X[i] / points.Mass[i];
-		points.Speed.Y[i] += forces.Y[i] / points.Mass[i];
-		points.Speed.Z[i] += forces.Z[i] / points.Mass[i];
+		points[i].Speed[0] += points[i].Force[0] / points[i].mass;
+		points[i].Speed[1] += points[i].Force[1] / points[i].mass;
+		points[i].Speed[2] += points[i].Force[2] / points[i].mass;
 
-		points.Pos.X[i] += points.Speed.X[i];
-		points.Pos.Y[i] += points.Speed.Y[i];
-		points.Pos.Z[i] += points.Speed.Z[i];
 
-		forces.X[i] = 0;
-		forces.Y[i] = 0;
-		forces.Z[i] = 0;
+		points[i].Pos[0] += points[i].Speed[0];
+		points[i].Pos[1] += points[i].Speed[1];
+		points[i].Pos[2] += points[i].Speed[2];
 	}
 }
 
 void GravSim::CalcFrameOpenMP(float dt)
 {
-	//Расчет сил
+	/*//Расчет сил
 	float f;
 
 	#pragma omp parallel for
@@ -135,43 +144,17 @@ void GravSim::CalcFrameOpenMP(float dt)
 		forces.X[i] = 0;
 		forces.Y[i] = 0;
 		forces.Z[i] = 0;
-	}
+	}*/
 }
 
 
 
-Points* GravSim::GetPoints()
+Particle* GravSim::GetPoints()
 {
-	return &points;
+	return points;
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-
-//Создает вектор заданного размера
-void GravSim::init_vector(VectorArray * vector, int count)
+int GravSim::GetPointsCount()
 {
-	init_array(&(vector->X), count);
-	init_array(&(vector->Y), count);
-	init_array(&(vector->Z), count);
-}
-
-//Создает массив Float  заданного размера
-void GravSim::init_array(float ** arr, int count, float default)
-{
-	*arr = new float[count];
-
-	//memset нельзя для float
-	for (int i = 0; i < count; i++)
-		(*arr)[i] = default;
-}
-
-//Задает рандомное значение для элементов вектора в заданном радиусе от (0,0,0)
-void GravSim::set_random_values(VectorArray * values, glm::vec3 radius, glm::vec3 center, int count)
-{
-	for (int i = 0; i < count; i++)
-	{
-		values->X[i] = (float)rand() / RAND_MAX * 2 * radius.x - radius.x + center.x;
-		values->Y[i] = (float)rand() / RAND_MAX * 2 * radius.y - radius.y + center.y;
-		values->Z[i] = (float)rand() / RAND_MAX * 2 * radius.z - radius.y + center.z;
-	}
+	return pointsCount;
 }

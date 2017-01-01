@@ -3,14 +3,18 @@
 
 #include "Point.h"
 
-struct Frame
+namespace DataTypes
 {
-	double Dt;
-	Point* Points;
-	unsigned int Count;
 
-	Frame();
-	~Frame();
-};
+	struct Frame
+	{
+		double Dt;
+		Point* Points;
+		unsigned int Count;
+
+		Frame();
+		~Frame();
+	};
+}
 
 #endif

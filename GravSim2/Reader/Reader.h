@@ -27,7 +27,7 @@ public:
 	 *        выделяет каждый раз память под объект
 	 *	 	  Frame
 	 */
-	Frame* ReadFrame();
+	DataTypes::Frame* ReadFrame();
 
 	/*!
 	 * \brief Считывает один кадр из файла
@@ -38,7 +38,7 @@ public:
 	 * УБЕДИТЕСЬ, ЧТО ВО FRAME ВЫДЕЛЕН БУФЕР
      * POINTS ДОСТАТОЧНОГО РАЗМЕРА
  	 */
-	bool ReadFrame(Frame* frame);
+	bool ReadFrame(DataTypes::Frame* frame);
 
 private:
 

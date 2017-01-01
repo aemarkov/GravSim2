@@ -5,7 +5,7 @@
 #include "Frame.h"
 #include "Simulator\GravSim.h"
 
-void PointsToFrame(Points* points, Frame & frame, float dt);
+void PointsToFrame(Particle* points, int particleCount,  DataTypes::Frame & frame, float dt);
 
 int main(int argc, char** argv)
 {
@@ -30,9 +30,9 @@ int main(int argc, char** argv)
 
 	GravSim sim (count, pointMass, G, minDist, glm::vec3(0, 0, 0), glm::vec3(radius,  radius, radius));
 	Writer writer(count, argv[1]);
-	Frame frame;
+	DataTypes::Frame frame;
 	
-	frame.Points = new Point[count];
+	frame.Points = new DataTypes::Point[count];
 	frame.Count = count;
 	
 	int perc10 = stepsCount / 10;
@@ -50,10 +50,12 @@ int main(int argc, char** argv)
 
 	for (int step = 0; step < stepsCount; step++)
 	{
-		sim.CalcFrameOpenMP(dt);
-		Points* points = sim.GetPoints();
+		sim.CalcFrameSingleThread(dt);
 
-		PointsToFrame(points, frame, dt);
+		Particle* points = sim.GetPoints();
+		int count = sim.GetPointsCount();
+
+		PointsToFrame(points, count, frame, dt);
 		writer.WriteFrame(frame);
 
 		if (step%perc10 == 0)
@@ -71,18 +73,14 @@ int main(int argc, char** argv)
     return 0;
 }
 
-void PointsToFrame(Points* points, Frame & frame, float dt)
+void PointsToFrame(Particle* points, int pointsCount, DataTypes::Frame & frame, float dt)
 {
-	for (int i = 0; i < points->Count; i++)
+	for (int i = 0; i < pointsCount; i++)
 	{
-		frame.Points[i].X = points->Pos.X[i];
-		frame.Points[i].Y = points->Pos.Y[i];
-		frame.Points[i].Z = points->Pos.Z[i];
-
-		//std::cout << frame.Points[i].X << " " << frame.Points[i].Y << " " << frame.Points[i].Z << "\n";
+		frame.Points[i].X = points[i].Pos[0];
+		frame.Points[i].Y = points[i].Pos[1];
+		frame.Points[i].Z = points[i].Pos[2];
 	}
-
-	//std::cout << "\n\n";
 
 	frame.Dt = dt;
 }

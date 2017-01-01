@@ -1,5 +1,7 @@
 #include "Frame.h"
 
+using namespace DataTypes;
+
 Frame::Frame()
 {
 	Points = nullptr;

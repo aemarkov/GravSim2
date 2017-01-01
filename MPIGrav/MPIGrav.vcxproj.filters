@@ -36,10 +36,7 @@
     <ClInclude Include="Simulator\GravSim.h">
       <Filter>Simulator</Filter>
     </ClInclude>
-    <ClInclude Include="Simulator\Points.h">
-      <Filter>Simulator</Filter>
-    </ClInclude>
-    <ClInclude Include="Simulator\VectorArray.h">
+    <ClInclude Include="Simulator\Particle.h">
       <Filter>Simulator</Filter>
     </ClInclude>
   </ItemGroup>
@@ -54,9 +51,6 @@
       <Filter>Writer</Filter>
     </ClCompile>
     <ClCompile Include="Simulator\GravSim.cpp">
-      <Filter>Simulator</Filter>
-    </ClCompile>
-    <ClCompile Include="Simulator\VectorArray.cpp">
       <Filter>Simulator</Filter>
     </ClCompile>
   </ItemGroup>
