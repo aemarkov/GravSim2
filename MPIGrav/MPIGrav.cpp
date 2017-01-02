@@ -1,6 +1,8 @@
 #include <iostream>
 #include <omp.h>
+#include <mpi.h>
 
+#include "mpicommon.h"
 #include "Writer\Writer.h"
 #include "Frame.h"
 #include "Simulator\GravSim.h"
@@ -9,6 +11,10 @@ void PointsToFrame(Particle* points, int particleCount,  DataTypes::Frame & fram
 
 int main(int argc, char** argv)
 {
+
+	//MPI_Init(&argc, &argv);
+	//MPI_Comm_rank(MPI_COMM_WORLD, &ProcessRank);
+	//MPI_Comm_size(MPI_COMM_WORLD, &ProcessNum);
 
 	if (argc != 2)
 	{
@@ -20,7 +26,7 @@ int main(int argc, char** argv)
 	omp_set_num_threads(1);
 
 	// ....... ѕараметры симул€ции ...........
-	int count = 3000;
+	int count = 1000;
 	int stepsCount = 500;
 	float dt = 1;
 
@@ -54,7 +60,7 @@ int main(int argc, char** argv)
 
 	for (int step = 0; step < stepsCount; step++)
 	{
-		sim.CalcFrameOpenMPOptimize(dt);
+		sim.CalcFrameOpenMP(dt);
 
 		Particle* points = sim.GetPoints();
 		int count = sim.GetPointsCount();
@@ -73,6 +79,8 @@ int main(int argc, char** argv)
 	std::cout << "Total duration: " << duration << "\n";
 	std::cout << "Press any key...\n";
 	std::cin.get();
+
+	//MPI_Finalize();
 
     return 0;
 }

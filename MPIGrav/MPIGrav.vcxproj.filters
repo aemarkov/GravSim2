@@ -42,6 +42,9 @@
     <ClInclude Include="Simulator\Vec3.h">
       <Filter>Simulator</Filter>
     </ClInclude>
+    <ClInclude Include="mpicommon.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

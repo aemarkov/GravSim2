@@ -117,8 +117,7 @@ void GravSim::CalcFrameSingleThread(float dt)
 void GravSim::CalcFrameOpenMP(float dt)
 {
 	//Расчет сил
-	int block = pointsCount / numThreads / 2;
-#pragma omp parallel for schedule(dynamic, block) 
+	#pragma omp parallel for
 	for (int i = 0; i < pointsCount; i++)
 	{
 		int thread = omp_get_thread_num();
@@ -158,7 +157,7 @@ void GravSim::CalcFrameOpenMP(float dt)
 	//Расчет перемещений
 	float force[3] = { 0,0,0 };
 
-#pragma omp parallel for
+	#pragma omp parallel for
 	for (int i = 0; i < pointsCount; i++)
 	{
 		points[i].Speed[0] += points[i].Force[0] / points[i].mass;
