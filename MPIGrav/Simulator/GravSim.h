@@ -23,6 +23,7 @@ public:
 
 	void CalcFrameSingleThread(float dt);
 	void CalcFrameOpenMP(float dt);
+	void CalcFrameOpenMPOptimize(float dt);
 
 	Particle* GetPoints();
 	int GetPointsCount();

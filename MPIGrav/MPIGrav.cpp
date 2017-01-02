@@ -17,10 +17,10 @@ int main(int argc, char** argv)
 	}
 
 
-	omp_set_num_threads(4);
+	omp_set_num_threads(1);
 
 	// ....... ѕараметры симул€ции ...........
-	int count = 1000;
+	int count = 3000;
 	int stepsCount = 500;
 	float dt = 1;
 
@@ -54,7 +54,7 @@ int main(int argc, char** argv)
 
 	for (int step = 0; step < stepsCount; step++)
 	{
-		sim.CalcFrameOpenMP(dt);
+		sim.CalcFrameOpenMPOptimize(dt);
 
 		Particle* points = sim.GetPoints();
 		int count = sim.GetPointsCount();

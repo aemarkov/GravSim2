@@ -114,11 +114,11 @@ void GravSim::CalcFrameSingleThread(float dt)
 	}
 }
 
-
 void GravSim::CalcFrameOpenMP(float dt)
 {
 	//Расчет сил
-	#pragma omp parallel for
+	int block = pointsCount / numThreads / 2;
+#pragma omp parallel for schedule(dynamic, block) 
 	for (int i = 0; i < pointsCount; i++)
 	{
 		int thread = omp_get_thread_num();
@@ -127,7 +127,7 @@ void GravSim::CalcFrameOpenMP(float dt)
 		for (int j = 0; j < pointsCount; j++)
 		{
 
-			if (i != j)
+			if (i == j)
 				continue;
 
 			//Расчет расстояний
@@ -152,28 +152,89 @@ void GravSim::CalcFrameOpenMP(float dt)
 			points[i].Force[0] += fx;
 			points[i].Force[1] += fy;
 			points[i].Force[2] += fz;
-
-			/*tempForces[i * 3 * numThreads + thread + 0] += fx;
-			tempForces[i * 3 * numThreads + thread + 1] += fy;
-			tempForces[i * 3 * numThreads + thread + 2] += fz;
-
-			tempForces[j * 3 * numThreads + thread + 0] -= fx;
-			tempForces[j * 3 * numThreads + thread + 1] -= fy;
-			tempForces[j * 3 * numThreads + thread + 2] -= fz*/
 		}
 	}
 
 	//Расчет перемещений
 	float force[3] = { 0,0,0 };
 
-	#pragma omp parallel for
+#pragma omp parallel for
 	for (int i = 0; i < pointsCount; i++)
 	{
-		/*for (int j = 0; j < numThreads; j++)
+		points[i].Speed[0] += points[i].Force[0] / points[i].mass;
+		points[i].Speed[1] += points[i].Force[1] / points[i].mass;
+		points[i].Speed[2] += points[i].Force[2] / points[i].mass;
+
+
+		points[i].Pos[0] += points[i].Speed[0];
+		points[i].Pos[1] += points[i].Speed[1];
+		points[i].Pos[2] += points[i].Speed[2];
+
+		//Обнуляем силы
+		points[i].Force[0] = 0;
+		points[i].Force[1] = 0;
+		points[i].Force[2] = 0;
+	}
+}
+
+void GravSim::CalcFrameOpenMPOptimize(float dt)
+{
+	//Расчет сил
+	int block = pointsCount / numThreads / 2;
+
+	#pragma omp parallel for schedule(dynamic, block) 
+	for (int i = 0; i < pointsCount; i++)
+	{
+		int thread = omp_get_thread_num();
+
+		//Расчет модуля и направления равнодействуюшей
+		for (int j = i+1; j < pointsCount; j++)
 		{
-			force[0] += tempForces[i * numThreads * 3 + j + 0];
-			force[1] += tempForces[i * numThreads * 3 + j + 1];
-			force[2] += tempForces[i * numThreads * 3 + j + 2];
+
+			//Расчет расстояний
+			float dx = points[j].Pos[0] - points[i].Pos[0];
+			float dy = points[j].Pos[1] - points[i].Pos[1];
+			float dz = points[j].Pos[2] - points[i].Pos[2];
+
+			float r_2 = (dx*dx + dy*dy + dz*dz);
+			if (r_2 < minDist)
+				continue;
+
+			r_2 = 1 / r_2;
+			float r_1 = sqrt(r_2);
+
+			//Расчет сил
+			float f = G*points[i].mass * points[j].mass * r_2;
+
+			float fx = f*dx*r_1;
+			float fy = f*dy*r_1;
+			float fz = f*dz*r_1;
+
+			tempForces[i * 3 * numThreads + thread * 3 + 0] += fx;
+			tempForces[i * 3 * numThreads + thread * 3 + 1] += fy;
+			tempForces[i * 3 * numThreads + thread * 3 + 2] += fz;
+
+			tempForces[j * 3 * numThreads + thread * 3 + 0] -= fx;
+			tempForces[j * 3 * numThreads + thread * 3 + 1] -= fy;
+			tempForces[j * 3 * numThreads + thread * 3 + 2] -= fz;
+		}
+	}
+
+	//Расчет перемещений
+	float force[3] = { 0,0,0 };
+
+	#pragma omp parallel for firstprivate (force)
+	for (int i = 0; i < pointsCount; i++)
+	{
+		for (int j = 0; j < numThreads; j++)
+		{
+			force[0] += tempForces[i * numThreads * 3 + j * 3 + 0];
+			force[1] += tempForces[i * numThreads * 3 + j * 3 + 1];
+			force[2] += tempForces[i * numThreads * 3 + j * 3 + 2];
+
+			tempForces[i * numThreads * 3 + j * 3 + 0] = 0;
+			tempForces[i * numThreads * 3 + j * 3 + 1] = 0;
+			tempForces[i * numThreads * 3 + j * 3 + 2] = 0;
 		}
 
 		points[i].Speed[0] += force[0] / points[i].mass;
@@ -188,23 +249,8 @@ void GravSim::CalcFrameOpenMP(float dt)
 		//Обнуляем силы
 		force[0] = 0;
 		force[1] = 0;
-		force[2] = 0;*/
-
-		points[i].Speed[0] += points[i].Force[0] / points[i].mass;
-		points[i].Speed[1] += points[i].Force[1] / points[i].mass;
-		points[i].Speed[2] += points[i].Force[2] / points[i].mass;
-
-
-		points[i].Pos[0] += points[i].Speed[0];
-		points[i].Pos[1] += points[i].Speed[1];
-		points[i].Pos[2] += points[i].Speed[2];
-
-		//Обнуляем силы
-		points[i].Force[0] = 0;
-		points[i].Force[1] = 0;
-		points[i].Force[2] = 0;
-
-
+		force[2] = 0;
+		
 	}
 }
 
