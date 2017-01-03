@@ -51,15 +51,12 @@
     <ClInclude Include="Engine\FiguresCreator.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Reader\Reader.h">
-      <Filter>Reader</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
-    <ClCompile Include="GravSim2.cpp">
+    <ClCompile Include="Visualizer.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Engine.cpp">
@@ -79,9 +76,6 @@
     </ClCompile>
     <ClCompile Include="Engine\FiguresCreator.cpp">
       <Filter>Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="Reader\Reader.cpp">
-      <Filter>Reader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

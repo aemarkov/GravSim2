@@ -13,24 +13,42 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Point">
+      <UniqueIdentifier>{99d1f8ec-4858-430b-ab0a-d6db873a0a85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Writer">
+      <UniqueIdentifier>{2c0ff22a-e15d-4a18-bfa6-81f915a48d9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Reader">
+      <UniqueIdentifier>{ebaf9a18-189c-4bd5-a635-0d3d0761a0c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>Заголовочные файлы</Filter>
+    <ClInclude Include="Point.h">
+      <Filter>Point</Filter>
     </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>Заголовочные файлы</Filter>
+    <ClInclude Include="Frame.h">
+      <Filter>Point</Filter>
+    </ClInclude>
+    <ClInclude Include="Writer\Writer.h">
+      <Filter>Writer</Filter>
+    </ClInclude>
+    <ClInclude Include="Reader\Reader.h">
+      <Filter>Reader</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Файлы исходного кода</Filter>
+    <ClCompile Include="Frame.cpp">
+      <Filter>Point</Filter>
     </ClCompile>
-    <ClCompile Include="MPIGrav.cpp">
-      <Filter>Файлы исходного кода</Filter>
+    <ClCompile Include="Writer\Writer.cpp">
+      <Filter>Writer</Filter>
+    </ClCompile>
+    <ClCompile Include="Reader\Reader.cpp">
+      <Filter>Reader</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

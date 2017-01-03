@@ -13,24 +13,42 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Point">
-      <UniqueIdentifier>{99d1f8ec-4858-430b-ab0a-d6db873a0a85}</UniqueIdentifier>
+    <Filter Include="Simulator">
+      <UniqueIdentifier>{15bfa921-15cc-4213-88f2-cd36c8e11978}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Point.h">
-      <Filter>Point</Filter>
+    <ClInclude Include="stdafx.h">
+      <Filter>Заголовочные файлы</Filter>
     </ClInclude>
-    <ClInclude Include="Frame.h">
-      <Filter>Point</Filter>
+    <ClInclude Include="targetver.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="Simulator\GravSim.h">
+      <Filter>Simulator</Filter>
+    </ClInclude>
+    <ClInclude Include="Simulator\Particle.h">
+      <Filter>Simulator</Filter>
+    </ClInclude>
+    <ClInclude Include="Simulator\Vec3.h">
+      <Filter>Simulator</Filter>
+    </ClInclude>
+    <ClInclude Include="mpicommon.h">
+      <Filter>Заголовочные файлы</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Frame.cpp">
-      <Filter>Point</Filter>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Файлы исходного кода</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenMPGrav.cpp">
+      <Filter>Файлы исходного кода</Filter>
+    </ClCompile>
+    <ClCompile Include="Simulator\GravSim.cpp">
+      <Filter>Simulator</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

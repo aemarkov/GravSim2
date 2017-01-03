@@ -57,7 +57,7 @@ DataTypes::Frame*  Reader::ReadFrame()
 
 	if (!ReadFrame(frame))
 		return nullptr;
-	
+
 	return frame;
 }
 

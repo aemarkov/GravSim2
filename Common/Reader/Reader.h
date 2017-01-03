@@ -11,33 +11,33 @@ public:
 	Reader(const char* filename);
 	~Reader();
 
-	/*! 
-	 * \brief Открывает файл
-	 */
+	/*!
+	* \brief Открывает файл
+	*/
 	unsigned int Open(const char* filename);
 
 	/*!
-	 * \brief Возвращает количество точек в кадре
-	 */
+	* \brief Возвращает количество точек в кадре
+	*/
 	unsigned int GetPointsCount();
 	void Close();
 
 	/*!
-	 * \brief Считывает один кадр из файла и 
-	 *        выделяет каждый раз память под объект
-	 *	 	  Frame
-	 */
+	* \brief Считывает один кадр из файла и
+	*        выделяет каждый раз память под объект
+	*	 	  Frame
+	*/
 	DataTypes::Frame* ReadFrame();
 
 	/*!
-	 * \brief Считывает один кадр из файла
-	 *        и записывает его по укзаателю
-	 *		  на Frame. 
-	 *
-	 * ВНИМАНИЕ:
-	 * УБЕДИТЕСЬ, ЧТО ВО FRAME ВЫДЕЛЕН БУФЕР
-     * POINTS ДОСТАТОЧНОГО РАЗМЕРА
- 	 */
+	* \brief Считывает один кадр из файла
+	*        и записывает его по укзаателю
+	*		  на Frame.
+	*
+	* ВНИМАНИЕ:
+	* УБЕДИТЕСЬ, ЧТО ВО FRAME ВЫДЕЛЕН БУФЕР
+	* POINTS ДОСТАТОЧНОГО РАЗМЕРА
+	*/
 	bool ReadFrame(DataTypes::Frame* frame);
 
 private:

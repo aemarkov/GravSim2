@@ -117,17 +117,6 @@ void CreatePoints(int count)
 	points.Points = new GLfloat[count*3];
 	points.Colors = new GLfloat[count];
 	points.PointsCount = count;
-
-
-	/*for (int i = 0; i < count*3; i++)
-	{
-		points.Points[i] = (rand() % 600) / 100.0 - 3;
-	}
-
-	for (int i = 0; i < count; i ++)
-	{
-		points.Colors[i] = 255;
-	}*/
 } 
 
 void FrameToPoints(Frame & frame, DataToDraw & data)
