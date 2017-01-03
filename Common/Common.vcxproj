@@ -137,11 +137,14 @@
     <ClInclude Include="Frame.h" />
     <ClInclude Include="Point.h" />
     <ClInclude Include="Reader\Reader.h" />
+    <ClInclude Include="SimParams\CommandLineParser.h" />
+    <ClInclude Include="SimParams\SimParams.h" />
     <ClInclude Include="Writer\Writer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Frame.cpp" />
     <ClCompile Include="Reader\Reader.cpp" />
+    <ClCompile Include="SimParams\CommandLineParser.cpp" />
     <ClCompile Include="Writer\Writer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

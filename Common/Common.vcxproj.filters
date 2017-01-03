@@ -22,6 +22,9 @@
     <Filter Include="Reader">
       <UniqueIdentifier>{ebaf9a18-189c-4bd5-a635-0d3d0761a0c3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SimParams">
+      <UniqueIdentifier>{3f4fae25-9e16-467f-9cba-751939cbc00b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -39,6 +42,12 @@
     <ClInclude Include="Reader\Reader.h">
       <Filter>Reader</Filter>
     </ClInclude>
+    <ClInclude Include="SimParams\SimParams.h">
+      <Filter>SimParams</Filter>
+    </ClInclude>
+    <ClInclude Include="SimParams\CommandLineParser.h">
+      <Filter>SimParams</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Frame.cpp">
@@ -49,6 +58,9 @@
     </ClCompile>
     <ClCompile Include="Reader\Reader.cpp">
       <Filter>Reader</Filter>
+    </ClCompile>
+    <ClCompile Include="SimParams\CommandLineParser.cpp">
+      <Filter>SimParams</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
