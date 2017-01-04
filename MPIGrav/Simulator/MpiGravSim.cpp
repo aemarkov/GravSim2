@@ -245,9 +245,6 @@ void MpiGravSim::workerCalcStep(float dt)
 			int start1 = task[0] * pointsPerProcess;
 			int start2 = task[1] * pointsPerProcess;
 
-			//std::cout <<"#"<<workersProcessRank<<" " << start1 << " " << start1 + pointsPerProcess << "; " << start2 << " " << start2 + pointsPerProcess << "\n";
-			//std::cout.flush();
-
 			for (int i = start1; i < start1 + pointsPerProcess; i++)
 			{
 				for (int j = start2; j < start2 + pointsPerProcess; j++)
@@ -290,6 +287,9 @@ void MpiGravSim::workerCalcStep(float dt)
 	//Расчитываем скорости и перемещения в своем блоке (i)
 	for (int i = pointsDisplacement; i < pointsDisplacement + pointsPerProcess; i++)
 	{
+		//std::cout << "#" << workersProcessRank << " " << i << '\n';
+		//std::cout.flush();
+
 		//Скорости
 		points.speed[i * 3 + 0] += points.forces[i * 3 + 0] / points.mass[i];
 		points.speed[i * 3 + 1] += points.forces[i * 3 + 1] / points.mass[i];
@@ -350,6 +350,8 @@ bool MpiGravSim::calcForces(int i, int j, float* fs)
 	fs[0] = f*dx*r_1;
 	fs[1] = f*dy*r_1;
 	fs[2] = f*dz*r_1;
+
+	//std::cout << "f (" << i << ", " << j << ") = ("<<fs[0]<<", " << fs[1]<<", "<<fs[2]<<")\n";
 
 	return true;
 }
