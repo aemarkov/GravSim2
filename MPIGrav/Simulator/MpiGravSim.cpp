@@ -266,30 +266,13 @@ void MpiGravSim::workerCalcStep(float dt)
 		}
 	}
 
-	/*std::cout << "process: " << workersProcessRank << "\n";
-	for (int i = 0; i < points.count * 3; i+=3)
-	{
-		std::cout << "(" << partForces[i] << ", " << partForces[i + 1] << ", " << partForces[i + 2] << ")\n";
-	}
-
-	std::cout << "---\n";*/
 
 	//Объединяем силы
 	MPI_Allreduce(partForces, points.forces, points.count * 3, MPI_FLOAT, MPI_SUM, workersComm);
 
-	/*for (int i = 0; i < points.count * 3; i += 3)
-	{
-		std::cout << "(" << points.forces[i] << ", " << points.forces[i + 1] << ", " << points.forces[i + 2] << ")\n";
-	}
-
-	std::cout.flush();*/
-
 	//Расчитываем скорости и перемещения в своем блоке (i)
 	for (int i = pointsDisplacement; i < pointsDisplacement + pointsPerProcess; i++)
 	{
-		//std::cout << "#" << workersProcessRank << " " << i << '\n';
-		//std::cout.flush();
-
 		//Скорости
 		points.speed[i * 3 + 0] += points.forces[i * 3 + 0] / points.mass[i];
 		points.speed[i * 3 + 1] += points.forces[i * 3 + 1] / points.mass[i];
@@ -300,19 +283,10 @@ void MpiGravSim::workerCalcStep(float dt)
 		points.pos[i * 3 + 1] += points.speed[i * 3 + 1];
 		points.pos[i * 3 + 2] += points.speed[i * 3 + 2];
 
-		//Обнуляем силы
-		partForces[i * 3 + 0] = 0;
-		partForces[i * 3 + 1] = 0;
-		partForces[i * 3 + 2] = 0;
 	}
 
-	/*std::cout << "\nProcess: " << workersProcessRank << "\n";
-	
-	for (int i = 0; i < points.count; i++)
-		std::cout << i/3<<": "<< points.pos[i * 3 + 0] << ", " << points.pos[i * 3 + 1] << ", " << points.pos[i * 3 + 2] << "\n";
-	
-	std::cout << "--------\n";*/
-
+	//Обнуляем силы
+	memset(partForces, 0, sizeof(float) * 3 * points.count);
 
 	//Рассылаем скорости и перемещения
 	for (int i = 0; i < workersProcessNum; i++)
@@ -320,11 +294,6 @@ void MpiGravSim::workerCalcStep(float dt)
 		MPI_Bcast(points.speed + i * pointsPerProcess * 3, pointsPerProcess * 3, MPI_FLOAT, i, workersComm);
 		MPI_Bcast(points.pos + i * pointsPerProcess * 3, pointsPerProcess * 3, MPI_FLOAT, i, workersComm);
 	}
-
-	/*for (int i = 0; i < points.count; i++)
-		std::cout << i / 3 << ": " << points.pos[i * 3 + 0] << ", " << points.pos[i * 3 + 1] << ", " << points.pos[i * 3 + 2] << "\n";
-
-	std::cout.flush();*/
 }
 
 //Расчет силы между двумя точками
@@ -350,8 +319,6 @@ bool MpiGravSim::calcForces(int i, int j, float* fs)
 	fs[0] = f*dx*r_1;
 	fs[1] = f*dy*r_1;
 	fs[2] = f*dz*r_1;
-
-	//std::cout << "f (" << i << ", " << j << ") = ("<<fs[0]<<", " << fs[1]<<", "<<fs[2]<<")\n";
 
 	return true;
 }
