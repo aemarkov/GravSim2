@@ -4,7 +4,7 @@ Writer::Writer()
 {
 }
 
-Writer::Writer(unsigned int pointsCount, char * filename):stream(filename, std::ios::out|std::ios::binary)
+Writer::Writer(unsigned int pointsCount, const char * filename):stream(filename, std::ios::out|std::ios::binary)
 {
 	if(!stream)
 		throw std::string("Unable to open file \"") + std::string(filename) + std::string("\"");
@@ -22,7 +22,7 @@ Writer::~Writer()
 /*!
 * \brief Открывает файл и записывает в него количество точек
 */
-void Writer::Open(unsigned int pointsCount, char * filename)
+void Writer::Open(unsigned int pointsCount, const char * filename)
 {
 	stream.open(filename, std::ios::out | std::ios::binary);
 

@@ -48,6 +48,9 @@
     <ClInclude Include="SimParams\CommandLineParser.h">
       <Filter>SimParams</Filter>
     </ClInclude>
+    <ClInclude Include="CmdParams.h">
+      <Filter>SimParams</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Frame.cpp">

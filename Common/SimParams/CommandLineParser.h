@@ -2,6 +2,7 @@
 #define __COMMANDLINEPARSER_H__
 
 #include "SimParams.h"
+#include "CmdParams.h"
 
 #include <iostream>
 #include <cstring>
@@ -25,6 +26,11 @@
  * \param[out] params Параметры симуляции
  * \param[out] numberOfThreads Число потоков (-1 - не задано)
  */
-bool ParseCommandLine(int argc, char** argv, SimParams& params, int& numberOfThreads);
+bool ParseCommandLine(int argc, char** argv, CmdParams& params);
+
+/*!
+ * \brief  Читает параметры из файла конфигурации
+ */
+bool LoadParamsFile(const char* filename, SimParams& params);
 
 #endif

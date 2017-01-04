@@ -15,7 +15,7 @@ bool LoadParamsFile(const char* filename, SimParams& params);
  *   <Radius>
  *
  */
-bool ParseCommandLine(int argc, char ** argv, SimParams & params, int & numberOfThreads)
+bool ParseCommandLine(int argc, char ** argv, CmdParams & params)
 {
 	if (argc != 9 && argc != 11)
 	{
@@ -30,7 +30,7 @@ bool ParseCommandLine(int argc, char ** argv, SimParams & params, int & numberOf
 	int steps;				      bool isStepsEntered = false;
 	char* paramFile;              bool isParamFileEntered = false;
 	char* outputFile;             bool isOutputFileEntered = false;
-	numberOfThreads = -1;
+	params.NumberOfThreads = -1;
 
 
 	//Парсим аргументы
@@ -63,7 +63,7 @@ bool ParseCommandLine(int argc, char ** argv, SimParams & params, int & numberOf
 		else if (strcmp(argv[currentParam], "-nt") == 0)
 		{
 			currentParam++;
-			numberOfThreads = atoi(argv[currentParam]);
+			params.NumberOfThreads = atoi(argv[currentParam]);
 		}
 		else
 		{
@@ -85,8 +85,9 @@ bool ParseCommandLine(int argc, char ** argv, SimParams & params, int & numberOf
 	params.ParticlesCount = numOfParticles;
 	params.StepsCount = steps;
 	params.OutputFile = outputFile;
+	params.ParamsFile = paramFile;
 
-	return LoadParamsFile(paramFile, params);
+	return true;
 }
 
 void ShowUsage()

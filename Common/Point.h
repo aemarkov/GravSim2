@@ -1,5 +1,5 @@
-#ifndef __POINT_H__
-#define __POINT_H__
+#ifndef __COMMONPOINT_H__
+#define __COMMONPOINT_H__
 
 namespace DataTypes
 {

@@ -134,6 +134,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CmdParams.h" />
     <ClInclude Include="Frame.h" />
     <ClInclude Include="Point.h" />
     <ClInclude Include="Reader\Reader.h" />

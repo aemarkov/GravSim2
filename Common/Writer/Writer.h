@@ -13,13 +13,13 @@ class Writer
 {
 public:
 	Writer();
-	Writer(unsigned int pointsCount, char* filename);
+	Writer(unsigned int pointsCount, const char* filename);
 	~Writer();
 
 	/*!
 	 * \brief Открывает файл и записывает в него количество точек 
 	 */
-	void Open(unsigned int pointsCount, char* filename);
+	void Open(unsigned int pointsCount, const char* filename);
 
 	/*!
 	 * \brief Записывает кадр - массив точек и время относительно 

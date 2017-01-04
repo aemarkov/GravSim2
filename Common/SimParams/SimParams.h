@@ -15,9 +15,6 @@ struct SimParams
 	//Шаг симуляции
 	float Dt;
 
-	//Выходной файл, куда будет сохранена анимация
-	char* OutputFile;
-
 	//Масса одной частицы
 	float PointMass;
 

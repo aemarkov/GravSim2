@@ -3,6 +3,7 @@
 
 #include "..\MpiCommon.h"
 #include "Points.h"
+#include "Point.h"
 
 #include <glm\glm.hpp>
 #include <mpi.h>
@@ -22,6 +23,8 @@ public:
 
 	//Расчет шага симуляции
 	void CalcStep(float dt);
+
+	Points* GetPoints();
 
 private:
 
@@ -48,9 +51,16 @@ private:
 	const int TAG_WORK_RESPONSE = 2;			//Передача задачи
 
 
+
+
+	//Функция главного процесса - раздача задач
 	void rootCalcStep();
+
+	//Функция рабочих процессов - расчет
 	void workerCalcStep(float dt);
 
+	//Расчет силы между двумя точками
+	bool calcForces(int i, int j, float*);
 };
 
 #endif

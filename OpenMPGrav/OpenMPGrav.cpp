@@ -7,31 +7,38 @@
 #include "Simulator\GravSim.h"
 
 void PointsToFrame(Particle* points, int particleCount,  DataTypes::Frame & frame, float dt);
-void Simulate(SimParams & params);
+void Simulate(SimParams & params, const char* filename);
 
 int main(int argc, char** argv)
 {
-	SimParams params;
-	int numberOfThreads;
+	SimParams simParams;
+	CmdParams cmdParams;
 
-	if (!ParseCommandLine(argc, argv, params, numberOfThreads))
+	if (!ParseCommandLine(argc, argv, cmdParams))
 		return 0;
 
-	if(numberOfThreads!=-1)
-		omp_set_num_threads(numberOfThreads);	
+	if (!LoadParamsFile(cmdParams.ParamsFile, simParams))
+		return 0;
 
-	Simulate(params);
+	simParams.ParticlesCount = cmdParams.ParticlesCount;
+	simParams.StepsCount = cmdParams.StepsCount;
+
+	if(cmdParams.NumberOfThreads!=-1)
+		omp_set_num_threads(cmdParams.NumberOfThreads);	
+
+
+	Simulate(simParams, cmdParams.OutputFile);
 
 
     return 0;
 }
 
-void Simulate(SimParams & params)
+void Simulate(SimParams & params, const char* filename)
 {
 	double start, duration;
 
 	GravSim sim(params.ParticlesCount, params.PointMass, params.G, params.MinDist, glm::vec3(0, 0, 0), glm::vec3(params.Radius, params.Radius, params.Radius));
-	Writer writer(params.ParticlesCount, params.OutputFile);
+	Writer writer(params.ParticlesCount, filename);
 	DataTypes::Frame frame;
 
 	frame.Points = new DataTypes::Point[params.ParticlesCount];
@@ -83,5 +90,4 @@ void PointsToFrame(Particle* points, int pointsCount, DataTypes::Frame & frame, 
 	}
 
 	frame.Dt = dt;
-	frame.Wtf();
 }
