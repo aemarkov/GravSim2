@@ -80,6 +80,12 @@ void MpiGravSim::Init(int count, float pointMass, float G, float minDist, glm::v
 	{
 		pointsPerProcess = points.count / workersProcessNum;
 		pointsDisplacement = pointsPerProcess * workersProcessRank;
+
+		if (points.count % workersProcessNum != 0)
+		{
+			std::cout << "WARNING: points per process not equal for all processes\n";
+			std::cout.flush();
+		}
 	}
 
 	
@@ -234,7 +240,7 @@ void MpiGravSim::workerCalcStep(float dt)
 				}
 			}
 		}
-		/*else
+		else
 		{
 			int start1 = task[0] * pointsPerProcess;
 			int start2 = task[1] * pointsPerProcess;
@@ -260,10 +266,11 @@ void MpiGravSim::workerCalcStep(float dt)
 					partForces[j * 3 + 2] -= fs[2];
 				}
 			}
-		}*/
+		}
 	}
 
-	/*for (int i = 0; i < points.count * 3; i+=3)
+	/*std::cout << "process: " << workersProcessRank << "\n";
+	for (int i = 0; i < points.count * 3; i+=3)
 	{
 		std::cout << "(" << partForces[i] << ", " << partForces[i + 1] << ", " << partForces[i + 2] << ")\n";
 	}
@@ -299,12 +306,25 @@ void MpiGravSim::workerCalcStep(float dt)
 		partForces[i * 3 + 2] = 0;
 	}
 
+	/*std::cout << "\nProcess: " << workersProcessRank << "\n";
+	
+	for (int i = 0; i < points.count; i++)
+		std::cout << i/3<<": "<< points.pos[i * 3 + 0] << ", " << points.pos[i * 3 + 1] << ", " << points.pos[i * 3 + 2] << "\n";
+	
+	std::cout << "--------\n";*/
+
+
 	//Рассылаем скорости и перемещения
-	for (int i = 0; i < workersComm; i++)
+	for (int i = 0; i < workersProcessNum; i++)
 	{
-		MPI_Bcast(points.speed + i * pointsPerProcess, pointsPerProcess, MPI_FLOAT, i, workersComm);
-		MPI_Bcast(points.pos + i * pointsPerProcess, pointsPerProcess, MPI_FLOAT, i, workersComm);
+		MPI_Bcast(points.speed + i * pointsPerProcess * 3, pointsPerProcess * 3, MPI_FLOAT, i, workersComm);
+		MPI_Bcast(points.pos + i * pointsPerProcess * 3, pointsPerProcess * 3, MPI_FLOAT, i, workersComm);
 	}
+
+	/*for (int i = 0; i < points.count; i++)
+		std::cout << i / 3 << ": " << points.pos[i * 3 + 0] << ", " << points.pos[i * 3 + 1] << ", " << points.pos[i * 3 + 2] << "\n";
+
+	std::cout.flush();*/
 }
 
 //Расчет силы между двумя точками

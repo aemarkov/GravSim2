@@ -87,14 +87,14 @@ void Simulate(SimParams & params, const char* outputFile)
 
 	if (ProcessRank == RootProc)
 	{
-		/*std::cout << "Gravitation simulator v 2.0\n";
+		std::cout << "Gravitation simulator v 2.0\n";
 		std::cout << "Points: " << params.ParticlesCount << "\n";
 		std::cout << "Steps: " << params.StepsCount << "\n\n";
 
 		std::cout << "Point mass: " << params.PointMass << "\n";
 		std::cout << "G constant: " << params.G << "\n";
 		std::cout << "Spawn radius: " << params.Radius << "\n";
-		std::cout << "Min dist*: " << params.MinDist << "\n\n";*/
+		std::cout << "Min dist*: " << params.MinDist << "\n\n";
 	}
 
 	start = omp_get_wtime();
@@ -116,10 +116,10 @@ void Simulate(SimParams & params, const char* outputFile)
 
 	if (ProcessRank == RootProc)
 	{
-		/*std::cout << "100%\n\n";
+		std::cout << "100%\n\n";
 
 		std::cout << "Total duration: " << duration << "\n";
-		std::cout << "Press any key...\n";*/
+		std::cout << "Press any key...\n";
 		//std::cin.get();
 	}
 }
