@@ -1,7 +1,9 @@
-#ifndef __MPIINCLUDE_H__
-#define __MPIINCLUDE_H__
+﻿#ifndef __MPICOMMON_H__
+#define __MPICOMMON_H__
 
-int ProcessRank;
-int ProcessNum;
+extern int RootProc;
+extern int ProcessRank;
+extern int ProcessNum;
+
 
 #endif
