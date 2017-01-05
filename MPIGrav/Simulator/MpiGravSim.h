@@ -8,8 +8,7 @@
 #include <glm\glm.hpp>
 #include <mpi.h>
 #include <iostream>
-
-#include <Windows.h>
+#include <omp.h>
 
 class MpiGravSim
 {
@@ -33,14 +32,17 @@ private:
 	int workersProcessNum;		//число рабочих процессов
 	int workersProcessRank;		//Ранк рабочего процесса в коммуникаторе
 
+	int numThreads;				//Число потоков OpenMP
+
 	int pointsPerProcess;		//Число точек в блоке (на процесс)
 	int pointsDisplacement;		//Смещение каждого блока
 
 	int* tasks;					//Задачи
-	int numTasks;
-	int currentTask;
+	int numTasks;				//Число задач
+	int currentTask;			//Текущая задача
 
 	Points points;				//Данные точек
+	float* tempForces;			//Временные силы для потока
 	float* partForces;			//Временные силы для процесса
 
 	float G;
@@ -59,8 +61,16 @@ private:
 	//Функция рабочих процессов - расчет
 	void workerCalcStep(float dt);
 
-	//Расчет силы между двумя точками
-	bool calcForces(int i, int j, float*);
+	/*! 
+	 * \brief Расчет силы между двумя точками
+	 *
+	 * param[in] pi - индекс точки в общем массиве (со смещением)
+	 * param[in] pj - индекс точки в общем массиве (со смещением)
+	 * param[in] tfi - индекс в массиве временных сил (без смещения)
+	 * param[in] tfj - индекс в массиве временных сил (без смещения)
+	 * param[in] thread - номер потока
+	 */
+	bool calcForces(int pi, int pj,  int tfj, int thread);
 };
 
 #endif

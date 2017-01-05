@@ -15,6 +15,7 @@ MpiGravSim::~MpiGravSim()
 	{
 		delete[] points.mass;
 		delete[] partForces;
+		delete[] tempForces;
 		delete[] points.forces;
 		delete[] points.speed;
 	}
@@ -40,6 +41,28 @@ void MpiGravSim::Init(int count, float pointMass, float G, float minDist, glm::v
 	this->G = G;
 	this->minDist = minDist;
 
+	//Определение числа потоков OpenMP
+	#pragma omp parallel
+	{
+		#pragma omp single
+		{
+			numThreads = omp_get_num_threads();
+		}
+	}
+
+	//Расчитываем число точек на процесс и смещение для каждого процесса
+	if (ProcessRank != RootProc)
+	{
+		pointsPerProcess = points.count / workersProcessNum;
+		pointsDisplacement = pointsPerProcess * workersProcessRank;
+
+		if (points.count % workersProcessNum != 0)
+		{
+			std::cout << "WARNING: points per process not equal for all processes\n";
+			std::cout.flush();
+		}
+	}
+
 	//Выделение буферов и инициализация
 	points.pos = new float[points.count * 3];
 
@@ -49,6 +72,7 @@ void MpiGravSim::Init(int count, float pointMass, float G, float minDist, glm::v
 		points.forces = new float[points.count * 3];
 		points.speed = new float[points.count * 3];
 		partForces = new float[points.count * 3];
+		tempForces = new float[pointsPerProcess * numThreads * 3];
 
 		for (int i = 0; i < points.count; i++)
 			points.mass[i] = pointMass;
@@ -59,6 +83,8 @@ void MpiGravSim::Init(int count, float pointMass, float G, float minDist, glm::v
 			points.speed[i] = 0;
 			partForces[i] = 0;
 		}
+
+		memset(tempForces, 0, sizeof(float) * pointsPerProcess* numThreads * 3);
 	}
 
 	//Генерация положений
@@ -75,18 +101,6 @@ void MpiGravSim::Init(int count, float pointMass, float G, float minDist, glm::v
 	//Отправка положений
 	MPI_Bcast(points.pos, points.count * 3, MPI_FLOAT, RootProc, MPI_COMM_WORLD);
 
-	//Расчитываем число точек на процесс и смещение для каждого процесса
-	if (ProcessRank != RootProc)
-	{
-		pointsPerProcess = points.count / workersProcessNum;
-		pointsDisplacement = pointsPerProcess * workersProcessRank;
-
-		if (points.count % workersProcessNum != 0)
-		{
-			std::cout << "WARNING: points per process not equal for all processes\n";
-			std::cout.flush();
-		}
-	}
 
 	
 	//Создание задач (0,0), (0,1) ... (0,n-1), (1,1), (1, 2), ... (1,n-1), ..., (n-1, n-1)
@@ -221,56 +235,75 @@ void MpiGravSim::workerCalcStep(float dt)
 
 			int start = task[0] * pointsPerProcess;
 
+			//#pragma omp parallel for
 			for (int i = start; i < start + pointsPerProcess; i++)
 			{
+				int thread = omp_get_thread_num();
+				
 				for (int j = i+1; j < start + pointsPerProcess; j++)
 				{
-					float fs[3];
-					
-					if (!calcForces(i, j, fs))
-						continue;
-					
-					partForces[i * 3 + 0] += fs[0];
-					partForces[i * 3 + 1] += fs[1];
-					partForces[i * 3 + 2] += fs[2];
+					calcForces(i, j, j-start, thread);
+				}
+			}
 
-					partForces[j * 3 + 0] -= fs[0];
-					partForces[j * 3 + 1] -= fs[1];
-					partForces[j * 3 + 2] -= fs[2];
+			//Объединяем силы между потоками
+			for (int i = 0; i < pointsPerProcess; i++)
+			{
+				for (int j = 0; j < numThreads; j++)
+				{
+					partForces[start + i * 3 + 0] += tempForces[i * numThreads * 3 + j * 3 + 0];
+					partForces[start + i * 3 + 1] += tempForces[i * numThreads * 3 + j * 3 + 1];
+					partForces[start + i * 3 + 2] += tempForces[i * numThreads * 3 + j * 3 + 2];
 				}
 			}
 		}
+		/*
+		Различные i, j, т.е. находим силы между двумя блоками.
+		Здесь нет такой ситуации, что можно посчитать одну силу два раза,
+		считаем всё.
+		*/
 		else
 		{
 			int start1 = task[0] * pointsPerProcess;
 			int start2 = task[1] * pointsPerProcess;
 
+			
 			for (int i = start1; i < start1 + pointsPerProcess; i++)
 			{
+				int thread = omp_get_thread_num();
+
 				for (int j = start2; j < start2 + pointsPerProcess; j++)
 				{
-					float fs[3];
+					calcForces(i, j, j-start2, thread);
+				}
+			}
 
-					if (!calcForces(i, j, fs))
-						continue;
-
-					partForces[i * 3 + 0] += fs[0];
-					partForces[i * 3 + 1] += fs[1];
-					partForces[i * 3 + 2] += fs[2];
-
-					partForces[j * 3 + 0] -= fs[0];
-					partForces[j * 3 + 1] -= fs[1];
-					partForces[j * 3 + 2] -= fs[2];
+			//Объединяем силы между потоками
+			for (int i = 0; i < pointsPerProcess; i++)
+			{
+				for (int j = 0; j < numThreads; j++)
+				{
+					partForces[start2 + i * 3 + 0] += tempForces[i * numThreads * 3 + j * 3 + 0];
+					partForces[start2 + i * 3 + 1] += tempForces[i * numThreads * 3 + j * 3 + 1];
+					partForces[start2 + i * 3 + 2] += tempForces[i * numThreads * 3 + j * 3 + 2];
 				}
 			}
 		}
+
+		memset(tempForces, 0, sizeof(float) * 3 * numThreads);
 	}
 
+	std::cout << "\nProcess " << workersProcessRank << "\n";
+	for (int i = 0; i < points.count; i++)
+		std::cout << i<< ". (" << partForces[i * 3] << ", " << partForces[i * 3 + 1] << ", " << partForces[i * 3 + 2] << ")\n";
 
-	//Объединяем силы
+	std::cout.flush();
+
+	//Объединяем силы между процессами
 	MPI_Allreduce(partForces, points.forces, points.count * 3, MPI_FLOAT, MPI_SUM, workersComm);
 
 	//Расчитываем скорости и перемещения в своем блоке (i)
+	//#pragma omp parallel for
 	for (int i = pointsDisplacement; i < pointsDisplacement + pointsPerProcess; i++)
 	{
 		//Скорости
@@ -297,13 +330,13 @@ void MpiGravSim::workerCalcStep(float dt)
 }
 
 //Расчет силы между двумя точками
-bool MpiGravSim::calcForces(int i, int j, float* fs)
+bool MpiGravSim::calcForces(int pi, int pj, int tfj, int thread)
 {
 
 	//Расчет расстояний
-	float dx = points.pos[j * 3 + 0] - points.pos[i * 3 + 0];
-	float dy = points.pos[j * 3 + 1] - points.pos[i * 3 + 1];
-	float dz = points.pos[j * 3 + 2] - points.pos[i * 3 + 2];
+	float dx = points.pos[pj * 3 + 0] - points.pos[pi * 3 + 0];
+	float dy = points.pos[pj * 3 + 1] - points.pos[pi * 3 + 1];
+	float dz = points.pos[pj * 3 + 2] - points.pos[pi * 3 + 2];
 
 	float r_2 = (dx*dx + dy*dy + dz*dz);
 	
@@ -314,11 +347,31 @@ bool MpiGravSim::calcForces(int i, int j, float* fs)
 	float r_1 = sqrt(r_2);
 
 	//Расчет сил
-	float f = G*points.mass[i] * points.mass[j] * r_2;
+	float f = G*points.mass[pi] * points.mass[pj] * r_2;
 
-	fs[0] = f*dx*r_1;
-	fs[1] = f*dy*r_1;
-	fs[2] = f*dz*r_1;
+	float fx = 0.01; // f*dx*r_1;
+	float fy = 0.01; // f*dy*r_1;
+	float fz = 0.01; // f*dz*r_1;
+
+	tempForces[pi * 3 * numThreads + thread * 3 + 0] += fx;
+	tempForces[pi * 3 * numThreads + thread * 3 + 1] += fy;
+	tempForces[pi * 3 * numThreads + thread * 3 + 2] += fz;
+
+	/*partForces[pi * 3 + 0] += fx;
+	partForces[pi * 3 + 1] += fy;
+	partForces[pi * 3 + 2] += fz;*/
+
+	tempForces[pj * 3 * numThreads + thread * 3 + 0] -= fx;
+	tempForces[pj * 3 * numThreads + thread * 3 + 1] -= fy;
+	tempForces[pj * 3 * numThreads + thread * 3 + 2] -= fz;
+
+	/*partForces[i * 3 + 0] += fs[0];
+	partForces[i * 3 + 1] += fs[1];
+	partForces[i * 3 + 2] += fs[2];
+
+	partForces[j * 3 + 0] -= fs[0];
+	partForces[j * 3 + 1] -= fs[1];
+	partForces[j * 3 + 2] -= fs[2];*/
 
 	return true;
 }
