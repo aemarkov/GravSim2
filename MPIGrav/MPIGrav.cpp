@@ -88,7 +88,7 @@ void Simulate(SimParams & params, const char* outputFile)
 
 	if (ProcessRank == RootProc)
 	{
-		std::cout << "Gravitation simulator v 2.0\n";
+		std::cout << "MPI gravitation simulator v 2.0\n";
 		std::cout << "Points: " << params.ParticlesCount << "\n";
 		std::cout << "Steps: " << params.StepsCount << "\n\n";
 
@@ -110,8 +110,12 @@ void Simulate(SimParams & params, const char* outputFile)
 			Points* points = sim.GetPoints();
 			PointsToFrame(*points, frame, params.Dt);
 			writer.WriteFrame(frame);
+		}
 
-			std::cout << "==================\n";
+		if (perc10!=0 && ProcessRank == RootProc && step % perc10 == 0)
+		{
+			std::cout << step / perc10 * 10 << "%\n";
+			std::cout.flush();
 		}
 	}
 
@@ -120,10 +124,7 @@ void Simulate(SimParams & params, const char* outputFile)
 	if (ProcessRank == RootProc)
 	{
 		std::cout << "100%\n\n";
-
 		std::cout << "Total duration: " << duration << "\n";
-		std::cout << "Press any key...\n";
-		//std::cin.get();
 	}
 }
 

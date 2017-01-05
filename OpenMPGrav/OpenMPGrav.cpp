@@ -67,7 +67,7 @@ void Simulate(SimParams & params, const char* filename)
 		PointsToFrame(points, count, frame, params.Dt);
 		writer.WriteFrame(frame);
 
-		if (step%perc10 == 0)
+		if (perc10 != 0 &&  step%perc10 == 0)
 			std::cout << step / perc10 * 10 << "%\n";
 	}
 
