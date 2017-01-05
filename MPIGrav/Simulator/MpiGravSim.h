@@ -1,11 +1,11 @@
 ﻿#ifndef __GRAVSIM_H__
 #define __GRAVSIM_H__
 
-#include "..\MpiCommon.h"
+#include "../mpicommon.h"
 #include "Points.h"
 #include "Point.h"
 
-#include <glm\glm.hpp>
+#include <glm/glm.hpp>
 #include <mpi.h>
 #include <iostream>
 #include <omp.h>

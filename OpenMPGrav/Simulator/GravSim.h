@@ -4,8 +4,8 @@
 #include "Particle.h"
 #include <omp.h>
 #include <cstdlib>
-#include <glm/glm.hpp>
-#include <iostream>>
+#include "glm/glm.hpp"
+#include <iostream>
 #include <math.h>
 
 /*!

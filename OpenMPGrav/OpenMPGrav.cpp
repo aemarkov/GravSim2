@@ -1,10 +1,10 @@
 #include <iostream>
 #include <omp.h>
 
-#include "SimParams\CommandLineParser.h"
-#include "Writer\Writer.h"
+#include "SimParams/CommandLineParser.h"
+#include "Writer/Writer.h"
 #include "Frame.h"
-#include "Simulator\GravSim.h"
+#include "Simulator/GravSim.h"
 
 void PointsToFrame(Particle* points, int particleCount,  DataTypes::Frame & frame, float dt);
 void Simulate(SimParams & params, const char* filename);
@@ -76,8 +76,8 @@ void Simulate(SimParams & params, const char* filename)
 	std::cout << "100%\n\n";
 
 	std::cout << "Total duration: " << duration << "\n";
-	std::cout << "Press any key...\n";
-	std::cin.get();
+	//std::cout << "Press any key...\n";
+	//std::cin.get();
 }
 
 void PointsToFrame(Particle* points, int pointsCount, DataTypes::Frame & frame, float dt)

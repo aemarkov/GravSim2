@@ -7,6 +7,7 @@
 #include <iostream>
 #include <cstring>
 #include <fstream>
+#include <cstdlib>
 
 /*!
  * \brief Парсит аргументы командной строки
