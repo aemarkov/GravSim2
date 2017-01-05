@@ -23,8 +23,7 @@
  *
  * \param[in] argc Количество аргументов
  * \param[in] argv Аргументы
- * \param[out] params Параметры симуляции
- * \param[out] numberOfThreads Число потоков (-1 - не задано)
+ * \param[out] params Параметры симуляции 
  */
 bool ParseCommandLine(int argc, char** argv, CmdParams& params);
 

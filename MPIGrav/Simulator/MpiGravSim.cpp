@@ -213,8 +213,8 @@ void MpiGravSim::workerCalcStep(float dt)
 		MPI_Send(&wtf, 1, MPI_INT, RootProc, TAG_WORK_REQUEST, MPI_COMM_WORLD);
 		MPI_Recv(task, 2, MPI_INT, RootProc, TAG_WORK_RESPONSE, MPI_COMM_WORLD, &status);
 
-		//std::cout << "#" << workersProcessRank << "(" << ProcessRank << ") (" << task[0] << ", " << task[1] << ")\n";
-		//std::cout.flush();
+		std::cout << "\n#" << workersProcessRank << " (" << task[0] << ", " << task[1] << ")\n";
+		std::cout.flush();
 
 		//(-1, -1) - нет задачи, завершение
 		if (task[0] == -1 && task[1] == -1)
@@ -238,7 +238,9 @@ void MpiGravSim::workerCalcStep(float dt)
 
 			int start = task[0] * pointsPerProcess;
 
-			#pragma omp parallel for schedule(dynamic, block) 
+			std::cout << start << " - " << start + pointsPerProcess << ";\n";
+			
+			//#pragma omp parallel for schedule(dynamic, block) 
 			for (int i = start; i < start + pointsPerProcess; i++)
 			{
 				int thread = omp_get_thread_num();
@@ -254,13 +256,15 @@ void MpiGravSim::workerCalcStep(float dt)
 			//Объединяем силы между потоками
 			for (int i = 0; i < pointsPerProcess; i++)
 			{
+				std::cout << "partForces         " << ": i = " << i << ", index = " << start + i << ", (" << partForces[(start + i) * 3 + 0] << ", " << partForces[(start + i) * 3 + 1] << ", " << partForces[(start + i) * 3 + 2] << ")\n";
+
 				for (int j = 0; j < numThreads; j++)
 				{
-					partForces[start + i * 3 + 0] += tempForces[i * numThreads * 3 + j * 3 + 0];
-					partForces[start + i * 3 + 1] += tempForces[i * numThreads * 3 + j * 3 + 1];
-					partForces[start + i * 3 + 2] += tempForces[i * numThreads * 3 + j * 3 + 2];
+					partForces[(start + i) * 3 + 0] += tempForces[i * numThreads * 3 + j * 3 + 0];
+					partForces[(start + i) * 3 + 1] += tempForces[i * numThreads * 3 + j * 3 + 1];
+					partForces[(start + i) * 3 + 2] += tempForces[i * numThreads * 3 + j * 3 + 2];
 
-					//std::cout << "thread: " << j << ": " << tempForces[i * numThreads * 3 + j * 3 + 0] << ", " << tempForces[i * numThreads * 3 + j * 3 + 1] << ", " << tempForces[i * numThreads * 3 + j * 3 + 2] << ")\n";
+					std::cout << "tempForces thread " << j << ": i = " << i<<", index = " << start+i << ", (" << tempForces[i * numThreads * 3 + j * 3 + 0] << ", " << tempForces[i * numThreads * 3 + j * 3 + 1] << ", " << tempForces[i * numThreads * 3 + j * 3 + 2] << ")\n";
 				}
 			}
 		}
@@ -274,7 +278,9 @@ void MpiGravSim::workerCalcStep(float dt)
 			int start1 = task[0] * pointsPerProcess;
 			int start2 = task[1] * pointsPerProcess;
 
-			#pragma omp parallel for schedule(dynamic, block) 
+			std::cout << start1 << " - " << start1 + pointsPerProcess << "; " << start2 << " - " << start2 + pointsPerProcess << "\n";
+
+			//#pragma omp parallel for schedule(dynamic, block) 
 			for (int i = start1; i < start1 + pointsPerProcess; i++)
 			{
 				int thread = omp_get_thread_num();
@@ -288,26 +294,42 @@ void MpiGravSim::workerCalcStep(float dt)
 			//Объединяем силы между потоками
 			for (int i = 0; i < pointsPerProcess; i++)
 			{
+				std::cout << "partForces         " << ": i = " << i << ", index = " << start1 + i << ", (" << partForces[(start1 + i) * 3 + 0] << ", " << partForces[(start1 + i) * 3 + 1] << ", " << partForces[(start1 + i) * 3 + 2] << ")\n";
+
 				for (int j = 0; j < numThreads; j++)
 				{
-					partForces[start2 + i * 3 + 0] += tempForces[i * numThreads * 3 + j * 3 + 0];
-					partForces[start2 + i * 3 + 1] += tempForces[i * numThreads * 3 + j * 3 + 1];
-					partForces[start2 + i * 3 + 2] += tempForces[i * numThreads * 3 + j * 3 + 2];
+					partForces[(start2 + i) * 3 + 0] += tempForces[i * numThreads * 3 + j * 3 + 0];
+					partForces[(start2 + i) * 3 + 1] += tempForces[i * numThreads * 3 + j * 3 + 1];
+					partForces[(start2 + i) * 3 + 2] += tempForces[i * numThreads * 3 + j * 3 + 2];
+
+					std::cout << "tempforces thread " << j << ": i = " << i << ", index = " << start2 + i << ", (" << tempForces[i * numThreads * 3 + j * 3 + 0] << ", " << tempForces[i * numThreads * 3 + j * 3 + 1] << ", " << tempForces[i * numThreads * 3 + j * 3 + 2] << ")\n";
 				}
 			}
 		}
 
 		memset(tempForces, 0, sizeof(float) * pointsPerProcess* numThreads * 3);
+
+		std::cout << "partForces: \n";
+		for (int i = 0; i < points.count; i++ )
+			std::cout << "[" << i << "] (" << partForces[i * 3 + 0] << ", " << partForces[i * 3 + 2] << ", " << partForces[i * 3 + 1] << "); ";
+		
+		std::wcout << "\n";
+
 	}
 
-	/*std::cout << "\nProcess " << workersProcessRank << "\n";
+	std::cout << "\nProcess " << workersProcessRank << "\n";
 	for (int i = 0; i < points.count; i++)
 		std::cout << i<< ". (" << partForces[i * 3] << ", " << partForces[i * 3 + 1] << ", " << partForces[i * 3 + 2] << ")\n";
 
-	std::cout.flush();*/
 
 	//Объединяем силы между процессами
 	MPI_Allreduce(partForces, points.forces, points.count * 3, MPI_FLOAT, MPI_SUM, workersComm);
+
+	std::cout << "-------------------\n";
+	for (int i = 0; i < points.count; i++)
+		std::cout << i << ". (" << points.forces[i * 3] << ", " << points.forces[i * 3 + 1] << ", " << points.forces[i * 3 + 2] << ")\n";
+
+	std::cout.flush();
 
 	//Расчитываем скорости и перемещения в своем блоке (i)
 	#pragma omp parallel for
@@ -356,21 +378,23 @@ bool MpiGravSim::calcForces(int pi, int pj, int tfj, int thread)
 	//Расчет сил
 	float f = G*points.mass[pi] * points.mass[pj] * r_2;
 
-	float fx =  f*dx*r_1;
-	float fy =  f*dy*r_1;
-	float fz =  f*dz*r_1;
+	float fx = 1;// f*dx*r_1;
+	float fy = 1;// f*dy*r_1;
+	float fz = 1;// f*dz*r_1;
 
 	/*tempForces[pi * 3 * numThreads + thread * 3 + 0] += fx;
 	tempForces[pi * 3 * numThreads + thread * 3 + 1] += fy;
 	tempForces[pi * 3 * numThreads + thread * 3 + 2] += fz;*/
 
+	tempForces[tfj * 3 * numThreads + thread * 3 + 0] -= fx;
+	tempForces[tfj * 3 * numThreads + thread * 3 + 1] -= fy;
+	tempForces[tfj * 3 * numThreads + thread * 3 + 2] -= fz;
+
 	partForces[pi * 3 + 0] += fx;
 	partForces[pi * 3 + 1] += fy;
 	partForces[pi * 3 + 2] += fz;
 
-	tempForces[pj * 3 * numThreads + thread * 3 + 0] -= fx;
-	tempForces[pj * 3 * numThreads + thread * 3 + 1] -= fy;
-	tempForces[pj * 3 * numThreads + thread * 3 + 2] -= fz;
+	
 
 	/*partForces[pj * 3 + 0] -= fx;
 	partForces[pj * 3 + 1] -= fy;

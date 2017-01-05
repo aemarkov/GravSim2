@@ -110,6 +110,8 @@ void Simulate(SimParams & params, const char* outputFile)
 			Points* points = sim.GetPoints();
 			PointsToFrame(*points, frame, params.Dt);
 			writer.WriteFrame(frame);
+
+			std::cout << "==================\n";
 		}
 	}
 
