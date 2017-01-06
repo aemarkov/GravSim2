@@ -21,7 +21,7 @@ $(BuildDir)/openmpgrav.o: $(OpenMPDGravDir)/Simulator/GravSim.cpp
 
 #MPI
 
-MPIGrav: Common $(BuildDir)/mpigrav.o $(MPIGravDir)/MPIGrav.cpp
+MPIGrav: Common $(BuildDir)/mpigrav.o $(BuildDir)/mpicommon.o $(MPIGravDir)/MPIGrav.cpp
 	$(CC1) -fopenmp $(MPIGravDir)/MPIGrav.cpp $(BuildDir)/mpigrav.o $(BuildDir)/mpicommon.o -lcommon -o $(OutDir)/MPIGrav
 
 $(BuildDir)/mpigrav.o:
@@ -47,3 +47,8 @@ $(BuildDir)/commandlineparser.o: $(CommonDir)/SimParams/CommandLineParser.cpp
 
 $(BuildDir)/frame.o: $(CommonDir)/Frame.cpp
 	$(CC1) -c $(CommonDir)/Frame.cpp -o $(BuildDir)/frame.o
+
+clean:
+	rm -rf $(BuildDir)/*
+	rm -f $(OutDir)/OpenMPGrav
+	rm -f $(OutDir)/MPIGrav

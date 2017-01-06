@@ -1,4 +1,4 @@
-#include "MpiCommon.h"
+#include "mpicommon.h"
 
 int RootProc = 0;
 int WriterProc = 1;

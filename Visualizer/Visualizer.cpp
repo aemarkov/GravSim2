@@ -28,7 +28,7 @@ unsigned int PointsCount;
 Frame* frame;
 
 unsigned int currentRenderFrame = 0;
-unsigned int framesPerRenderFrame = 3;
+unsigned int framesPerRenderFrame = 1;   //Скорость воспроизведения
 
 int main(int argc, char *argv[])
 {
@@ -90,8 +90,8 @@ DataToDraw CreateFigures()
 {
 	FiguresCreator creator;
 
-	const float circleRad = 1;
-	const float circleHeight = 3;
+	const float circleRad = 10;
+	const float circleHeight = 50;
 	const int countInCircle = 10;
 	
 	creator.DrawCircle(glm::vec3(0, 0, 0), circleRad, 36);

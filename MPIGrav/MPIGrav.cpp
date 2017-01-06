@@ -2,11 +2,11 @@
 #include <omp.h>
 #include <mpi.h>
 
-#include "SimParams\CommandLineParser.h"
-#include "MpiCommon.h"
-#include "Simulator\MpiGravSim.h"
+#include "SimParams/CommandLineParser.h"
+#include "mpicommon.h"
+#include "Simulator/MpiGravSim.h"
 #include "Frame.h"
-#include "Writer\Writer.h"
+#include "Writer/Writer.h"
 
 void Simulate(SimParams & params, const char* outputFile);
 void PointsToFrame(Points& points, DataTypes::Frame & frame, float dt);
@@ -21,6 +21,13 @@ int main(int argc, char** argv)
 	MPI_Init_thread(&argc, &argv, MPI_THREAD_FUNNELED, &providedLevel);
 	MPI_Comm_rank(MPI_COMM_WORLD, &ProcessRank);
 	MPI_Comm_size(MPI_COMM_WORLD, &ProcessNum);
+
+	//Получаем имя хоста
+	/*char hostname[1024];
+	int hostnameLength;
+
+	MPI_Get_processor_name(hostname, &hostnameLength);
+	std::cout << "[" << ProcessRank << "] of " << ProcessNum << " running on " << hostname << "\n";*/
 
 	//Чтение аргументов командной строки
 	if (!ParseCommandLine(argc, argv, cmdParams))

@@ -79,7 +79,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
     <None Include="shaders\fragment.glsl">
       <Filter>shaders</Filter>
     </None>

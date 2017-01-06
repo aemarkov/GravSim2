@@ -9,6 +9,7 @@
 #include <mpi.h>
 #include <iostream>
 #include <omp.h>
+#include <cstdlib>
 
 class MpiGravSim
 {

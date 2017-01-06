@@ -29,7 +29,7 @@ Engine::Engine(int width, int height, int major_version, int minor_version, std:
 
 	shader.UseProgram();
 
-	camera.SetPosition(0, 100, 0);
+	camera.SetPosition(0, 300, 0);
 	camera.SetRotationAngles(0, -85, 0);
 }
 
@@ -136,7 +136,7 @@ void Engine::init_points_buffer(DataBuffers & buffers, int bufferSize)
 //Main drawing and event cycle
 void Engine::sdl_loop()
 {
-	const float speed =1;
+	const float speed =5;
 
 	bool is_running = true;
 	while (is_running) {
